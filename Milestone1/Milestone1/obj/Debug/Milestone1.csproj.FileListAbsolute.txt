@@ -16,3 +16,6 @@ c:\users\danie\documents\visual studio 2015\Projects\Milestone1\Milestone1\bin\D
 c:\users\danie\documents\visual studio 2015\Projects\Milestone1\Milestone1\bin\Debug\System.Threading.Tasks.Extensions.dll
 c:\users\danie\documents\visual studio 2015\Projects\Milestone1\Milestone1\bin\Debug\Npgsql.xml
 c:\users\danie\documents\visual studio 2015\Projects\Milestone1\Milestone1\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\danie\Desktop\Repos\CS451Project\Milestone1\Milestone1\bin\Debug\Milestone1.exe.config
+C:\Users\danie\Desktop\Repos\CS451Project\Milestone1\Milestone1\obj\Debug\Milestone1.exe
+C:\Users\danie\Desktop\Repos\CS451Project\Milestone1\Milestone1\obj\Debug\Milestone1.pdb

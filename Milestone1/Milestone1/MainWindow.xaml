@@ -5,10 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Milestone1"
         mc:Ignorable="d"
-        Title="Milestone1" Height="547.059" Width="456.863">
-    <Grid>
+        Title="Milestone1" Height="550" Width="506.863">
+    <Grid Margin="0,0,2,0">
         <ComboBox x:Name="StateList" HorizontalAlignment="Left" Margin="59,46,0,0" VerticalAlignment="Top" Width="200" FontSize="14" SelectionChanged="StateListSelectionChanged"/>
-        <Label x:Name="StateLabel" Content="State:" HorizontalAlignment="Left" Margin="10,46,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="-0.171,0.54"/>
-        <DataGrid x:Name="BusinessGrid" HorizontalAlignment="Left" Margin="10,165,0,0" VerticalAlignment="Top" Height="341" Width="429"/>
+        <Label x:Name="StateLabel" Content="State:" HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="-0.171,0.54"/>
+        <DataGrid x:Name="BusinessGrid" Margin="11,168,10,0" VerticalAlignment="Top" Height="331"/>
+        <ComboBox x:Name="CityList" HorizontalAlignment="Left" Margin="59,111,0,0" VerticalAlignment="Top" Width="200" FontSize="14" SelectionChanged="CityListSelectionChanged"/>
+        <Label x:Name="CityLabel" Content="City:" HorizontalAlignment="Left" Margin="10,107,0,0" VerticalAlignment="Top" FontSize="14"/>
     </Grid>
 </Window>

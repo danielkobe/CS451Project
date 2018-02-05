@@ -23,13 +23,16 @@ namespace Milestone1
     {
         public class Business
         {
-            public Business (string name, string state)
+            public Business (string name, string state, string city)
             {
                 this.name = name;
                 this.state = state;
+                this.city = city;
             }
             public string name { get; set; }
             public string state { get; set; }
+            public string city { get; set; }
+
 
         }
         public MainWindow()
@@ -71,31 +74,38 @@ namespace Milestone1
             DataGridTextColumn col1 = new DataGridTextColumn();
             col1.Header = "Business Name";
             col1.Binding = new Binding("name");
-            col1.Width = 255;
+            col1.Width = 250;
             BusinessGrid.Columns.Add(col1);
 
             DataGridTextColumn col2 = new DataGridTextColumn();
             col2.Header = "State";
             col2.Binding = new Binding("state");
-            col2.Width = 255;
+            col2.Width = 50;
             BusinessGrid.Columns.Add(col2);
+
+            DataGridTextColumn col3 = new DataGridTextColumn();
+            col3.Header = "City";
+            col3.Binding = new Binding("city");
+            col3.Width = 170;
+            BusinessGrid.Columns.Add(col3);
         }
 
         private void StateListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            BusinessGrid.Items.Clear();
+            CityList.Items.Clear();
+
             using (var conn = new NpgsqlConnection(BuildConnString()))
             {
                 conn.Open();
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = "SELECT DISTINCT name,state FROM business WHERE state = '" + StateList.SelectedItem.ToString() + "';";
+                    cmd.CommandText = "SELECT DISTINCT city FROM business WHERE state = '" + StateList.SelectedItem.ToString() + "' ORDER BY city;";
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            BusinessGrid.Items.Add(new Business(reader.GetString(0), reader.GetString(1)));
+                            CityList.Items.Add(reader.GetString(0));
                         }
                     }
                 }
@@ -103,6 +113,33 @@ namespace Milestone1
                 conn.Close();
             }
 
+        }
+
+        private void CityListSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CityList.SelectedItem != null)
+            {
+                BusinessGrid.Items.Clear();
+                using (var conn = new NpgsqlConnection(BuildConnString()))
+                {
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = conn;
+                        cmd.CommandText = "SELECT name FROM business WHERE city = '" + CityList.SelectedItem.ToString() + "' AND state = '" + StateList.SelectedItem.ToString() + "';";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                BusinessGrid.Items.Add(new Business(reader.GetString(0), StateList.SelectedItem.ToString(), CityList.SelectedItem.ToString()));
+                            }
+                        }
+                    }
+
+                    conn.Close();
+                }
+
+            }
         }
     }
 }
