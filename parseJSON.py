@@ -88,10 +88,45 @@ def parseUserData():
     f.close()
 
 
-
-
 def parseCheckinData():
     #Steven's implementation
+    with open('.\yelp_checkin.JSON', 'r') as f:
+        outfile = open('checkin.txt', 'w')
+        line = f.readline()
+        morning = 0
+        afternoon = 0
+        evening = 0
+        night = 0
+        linecount = 0
+
+        while line:
+            data = json.loads(line)
+            outfile.write('\n' + cleanStr4SQL(data['business_id'])+ '\n')
+            time = data['time']
+            for days, entries in time.items():
+                for entry, val in entries.items():
+
+                    split_entry = entry.split(':')
+                    if (6 <= int(split_entry[0]) < 12):#6-12
+                        morning += int(val)
+                    if (12 <= int(split_entry[0]) < 17):#12-5
+                        afternoon += int(val)
+                    if (17 <= int(split_entry[0]) < 23):#5-11
+                        evening += int(val)
+                    if(6 > int(split_entry[0]) or int(split_entry[0]) >= 23): #11-6
+                        night += int(val)
+
+                outfile.write('             (' + str(days) + ', ' + str(morning) + ', ' + str(afternoon) + ', ' + str(evening) + ', ' + str(night) + ')\n')
+                linecount += 1
+                morning = 0
+                afternoon = 0
+                evening = 0
+                night = 0
+            line = f.readline()
+        print(linecount)
+
+def parseCheckinData():
+    #Steven
     with open('.\yelp_checkin.JSON', 'r') as f:
         outfile = open('checkin.txt', 'w')
         line = f.readline()
