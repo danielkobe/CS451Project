@@ -86,9 +86,50 @@ def parseUserData():
     print(count_line)
     outfile.close()
     f.close()
+
 def parseCheckinData():
-    #write code to parse yelp_checkin.JSON
-    pass
+    with open('.\yelp_checkin.JSON', 'r') as f:
+        outfile = open('checkin.txt', 'w')
+        outfile.write('business_id,  monday_visits, mon_morning, mon_afternoon, mon_evening, mon_night, tuesday_visits, tue_morning, tue_afternoon, tue_evening, tue_night, ')
+        outfile.write('wednesday_visits, wed_morning, wed_afternoon, wed_evening, wed_night, thursday_visits, thu_morning, thu_afternoon, thu_evening, thu_night, ')
+        outfile.write('friday_visits, fri_morning, fri_afternoon, fri_evening, fri_night, saturday_visits, sat_morning, sat_afternoon, sat_evening, sat_night, ')
+        outfile.write('sunday_visits, sun_morning, sun_afternoon, sun_evening, sun_night\n')
+        line = f.readline()
+        count_line = 0
+        visits_total = {'Monday': 0, 'Tuesday': 0, 'Wednesday': 0, 'Thursday': 0, 'Friday': 0, 'Saturday': 0, 'Sunday': 0}
+        visits = {'Morning': 0, 'Afternoon': 0, 'Evening': 0, 'Night': 0}
+        visitsList = {'Monday': {}, 'Tuesday': {}, 'Wednesday': {}, 'Thursday': {}, 'Friday': {}, 'Saturday': {}, 'Sunday': {}}
+        data = json.loads(line)
+        while line:
+            data = json.loads(line)
+            outfile.write(data['business_id'] + ', ')
+            for day in data['time']:
+                for hour in data['time'][day]:
+                    hr = int(hour.split(':')[0])
+                    if (hr >= 6 and hr < 12):
+                        visits['Morning'] += data['time'][day][hour]
+                    elif (hr >= 12 and hr < 17):
+                        visits['Afternoon'] += data['time'][day][hour]
+                    elif (hr >= 17 and hr < 23):
+                        visits['Evening'] += data['time'][day][hour]
+                    else:
+                        visits['Night'] += data['time'][day][hour]
+                for item in visits:
+                    visits_total[day] += visits[item]
+                visitsList[day] = visits
+                visits = dict.fromkeys(visits, 0)
+            for day in visits_total:
+                outfile.write(str(visits_total[day]) + ', ')
+                for item in visitsList[day]:
+                    outfile.write(str(visitsList[day][item]) + ', ')
+            outfile.write('\n')
+            visits_total = dict.fromkeys(visits_total, 0)
+            visits = dict.fromkeys(visits, 0)
+            line = f.readline()
+            count_line += 1
+        print(count_line)
+        outfile.close()
+        f.close()
 
 
 def parseReviewData():
