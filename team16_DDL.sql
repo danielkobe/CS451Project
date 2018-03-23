@@ -28,7 +28,7 @@ CREATE TABLE reviewTable (
 	funny INTEGER,
 	useful INTEGER,
 	cool INTEGER,
-	PRIMARY KEY (review_id)
+	PRIMARY KEY (review_id),
 	FOREIGN KEY (user_id) REFERENCES userTable(user_id),
 	FOREIGN KEY (business_id) REFERENCES businessTable(business_id)
 );

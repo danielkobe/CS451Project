@@ -109,7 +109,7 @@ def insert2BusinessTableAtrributes():
         #connect to yelpdb database on postgres server using psycopg2
         #TODO: update the database name, username, and password
         try:
-            conn = psycopg2.connect("dbname='yelpdb' user='postgres' host='localhost' password='Compaq27'")
+            conn = psycopg2.connect("dbname='yelpdb' user='postgres' host='localhost' password='Bix53z7h4m'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -123,9 +123,10 @@ def insert2BusinessTableAtrributes():
             attributes = data['attributes']
             for attr, val in attributes.items():
                 # non-nested attribute
-                if type(val) == str or type(val) == bool:
-                    if (type(val) == bool):
-                        val = str(val)
+                if type(val) != dict:
+                    if (type(val) == int):
+                        val = int2BoolStr(val)
+
                     sql_str = "INSERT INTO attributesTable (business_id,attribute_type, attribute_value) " \
                               "VALUES ('" + cleanStr4SQL(data['business_id']) + "','" + str(attr) + "','" + str(val) + "');"
                     try:
@@ -136,9 +137,10 @@ def insert2BusinessTableAtrributes():
                 # nested attributes
                 if type(val) == dict:
                     for nested_attr, nested_val in val.items():
- 
+                        if (type(val) == int):
+                            val = int2BoolStr(nested_val)
                         sql_str = "INSERT INTO attributesTable (business_id,attribute_type, attribute_value) " \
-                                  "VALUES ('" + cleanStr4SQL(data['business_id']) + "','" + str(nested_attr) + "','" + str(nested_val) + "');"
+                                      "VALUES ('" + cleanStr4SQL(data['business_id']) + "','" + str(nested_attr) + "','" + str(nested_val) + "');"
                         try:
                             cur.execute(sql_str)
                         except:
@@ -149,6 +151,7 @@ def insert2BusinessTableAtrributes():
 
             line = f.readline()
             count_line +=1
+            print(count_line)
 
         cur.close()
         conn.close()
