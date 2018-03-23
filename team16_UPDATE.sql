@@ -19,3 +19,11 @@ FROM (SELECT temp.business_id, (temp.sum / temp.count) as averageRating
 WHERE businessTable.business_id = temp.business_id
 
 -- update reviewcount
+
+UPDATE businessTable
+SET review_count = temp.rCount
+FROM (SELECT temp.business_id, (temp.review_count + 1) as rCount
+     FROM (SELECT business_id, review_count
+          FROM businessTable
+          GROUP BY business_id) as temp ) as temp
+     WHERE businessTable.business_id = temp.business_id
