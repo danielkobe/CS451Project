@@ -47,16 +47,77 @@ namespace Milestone1
             public string numCheckins { get; set; }
 
         }
+
+
+        public class User
+        {
+            public User(string name, string user_id, string yelping_since, int fans, double average_stars, int funny, int useful, int cool)
+            {
+                this.name = name;
+                this.user_id = user_id;
+                this.yelping_since = yelping_since;
+                this.fans = fans;
+                this.average_stars = average_stars;
+                this.funny = funny;
+                this.useful = useful;
+                this.cool = cool;
+
+            }
+
+            public string name { get; set; }
+            public string user_id { get; set; }
+            public string yelping_since { get; set; }
+
+            public int fans { get; set; }
+            public double average_stars { get; set; }
+            public int funny { get; set; }
+            public int useful { get; set; }
+            public int cool { get; set; }
+
+        }
+
+        public class Friend
+        {
+            public Friend(string name, string avgStar, string yelpSince)
+            {
+                this.name = name;
+                this.avgStar = avgStar;
+                this.yelpSince = yelpSince;
+            }
+            public string name { get; set; }
+            public string avgStar { get; set; }
+            public string yelpSince { get; set; }
+        }
+
+        public class FriendReview
+        {
+            public FriendReview(string name, string businessName, string city, string text)
+            {
+                this.name = name;
+                this.businessName = businessName;
+                this.city = city;
+                this.text = text;
+            }
+
+            public string name { get; set; }
+            public string businessName { get; set; }
+            public string city { get; set; }
+            public string text { get; set; }
+        }
+
+
         public MainWindow()
         {
             InitializeComponent();
             AddStates();
             AddColumnsToGrid();
+            AddColumnsToFriendsGrid();
+            AddColumnsToFriendsTipsGrid();
         }
 
         private string BuildConnString()
         {
-            return "Server=localhost; Database=yelpdb; Port=5433; Username=postgres; Password=Bix53z7h4m";
+            return "Server=localhost; Database=yelpdb; Port=5432; Username=postgres; Password=Compaq27";
         }
 
         public void AddStates()
@@ -266,5 +327,186 @@ namespace Milestone1
                 }
             }
         }
+
+
+        public void getUserIds(string userName)
+        {
+            using (var conn = new NpgsqlConnection(BuildConnString()))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT user_id,name,average_stars,fans,yelping_since,funny,useful,cool FROM userTable WHERE name = '" + userName + "';";
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userIds.Items.Add(reader.GetString(0));
+
+                        }
+                    }
+                }
+
+                conn.Close();
+            }
+        }
+
+        private void searchUserIdButton_Click(object sender, RoutedEventArgs e)
+        {
+            getUserIds(searchName.Text);
+
+        }
+
+        public void getUserFriends(string id)
+        {
+            using (var conn = new NpgsqlConnection(BuildConnString()))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT temp.name, temp.average_stars, temp.yelping_since FROM userTable as U, friendsTable as F, (SELECT * FROM userTable) as temp WHERE U.user_id = '" + id + "' AND U.user_id = F.user_id AND F.friend_id = temp.user_id;";
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userFriendsList.Items.Add(new Friend(reader.GetString(0), reader.GetDouble(1).ToString(), reader.GetString(2)));
+                        }
+                    }
+                }
+
+                conn.Close();
+            }
+        }
+
+        public void AddColumnsToFriendsGrid()
+        {
+            DataGridTextColumn col1 = new DataGridTextColumn();
+            col1.Header = "Name";
+            col1.Binding = new Binding("name");
+            col1.Width = 140;
+            userFriendsList.Columns.Add(col1);
+
+            DataGridTextColumn col2 = new DataGridTextColumn();
+            col2.Header = "Avg Stars";
+            col2.Binding = new Binding("avgStar");
+            col2.Width = 80;
+            userFriendsList.Columns.Add(col2);
+
+            DataGridTextColumn col3 = new DataGridTextColumn();
+            col3.Header = "Yelping Since";
+            col3.Binding = new Binding("yelpSince");
+            col3.Width = 150;
+            userFriendsList.Columns.Add(col3);
+        }
+
+        private void userIds_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string id = userIds.SelectedValue.ToString();
+           
+            getUserInformation(id);
+
+            userFriendsList.Items.Clear();
+            getUserFriends(id);
+
+            userFriendTipsGrid.Items.Clear();
+            getUserFriendsReviews(id);
+        }
+
+
+
+        public void AddColumnsToFriendsTipsGrid()
+        {
+            DataGridTextColumn col1 = new DataGridTextColumn();
+            col1.Header = "User Name";
+            col1.Binding = new Binding("name");
+            col1.Width = 80;
+            userFriendTipsGrid.Columns.Add(col1);
+
+            DataGridTextColumn col2 = new DataGridTextColumn();
+            col2.Header = "Business";
+            col2.Binding = new Binding("businessName");
+            col2.Width = 140;
+            userFriendTipsGrid.Columns.Add(col2);
+
+            DataGridTextColumn col3 = new DataGridTextColumn();
+            col3.Header = "City";
+            col3.Binding = new Binding("city");
+            col3.Width = 80;
+            userFriendTipsGrid.Columns.Add(col3);
+
+            DataGridTextColumn col4 = new DataGridTextColumn();
+            col4.Header = "Text";
+            col4.Binding = new Binding("text");
+            col4.Width = 270;
+            userFriendTipsGrid.Columns.Add(col4);
+
+        }
+
+        public void getUserInformation(string userId)
+        {
+            using (var conn = new NpgsqlConnection(BuildConnString()))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT user_id,name,average_stars,fans,yelping_since,funny,useful,cool FROM userTable WHERE user_id = '" + userId + "';";
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userNameTextBox.Text = reader.GetString(1);
+                            userStarsTextBox.Text = reader.GetDouble(2).ToString();
+                            userFansTextBox.Text = reader.GetDouble(3).ToString();
+                            userYelpSinceTextBox.Text = reader.GetString(4);
+                            funnyTextBox.Text = reader.GetDouble(5).ToString();
+                            coolTextBox.Text = reader.GetDouble(6).ToString();
+                            usefulTextBox.Text = reader.GetDouble(7).ToString();
+
+                        }
+                    }
+                }
+
+                conn.Close();
+            }
+        }
+
+        public void getUserFriendsReviews(string id)
+        {
+            using (var conn = new NpgsqlConnection(BuildConnString()))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT temp.name, B.name as businessName, B.city, temp.text " +
+                                       "FROM businessTable as B, (SELECT temp.name, R.user_id, R.business_id, R.text " +
+                                                                 "FROM reviewTable as R, (SELECT temp.user_id, temp.name, temp.average_stars, temp.yelping_since " +
+                                                                                         "FROM userTable as U, friendsTable as F, (SELECT * FROM userTable) as temp " +
+                                                                                         "WHERE U.user_id = '" + id + "' AND U.user_id = F.user_id AND F.friend_id = temp.user_id) as temp " +
+                                                                 "WHERE R.user_id = temp.user_id) as temp " +
+                                       "WHERE B.business_id = temp.business_id " +
+                                       "ORDER BY temp.name;";
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            userFriendTipsGrid.Items.Add(new FriendReview(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+                        }
+                    }
+                }
+
+                conn.Close();
+            }
+        }
+
     }
+
+
 }
