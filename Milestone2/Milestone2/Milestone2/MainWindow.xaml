@@ -7,12 +7,21 @@
         mc:Ignorable="d"
         Title="Milestone2" Height="750" Width="506.863">
     <Grid>
-        <TextBox x:Name="searchName" HorizontalAlignment="Left" Height="19" Margin="10,36,0,0" TextWrapping="Wrap" Text="&lt;name&gt;" VerticalAlignment="Top" Width="142"/>
-        <ListBox x:Name="userIds" HorizontalAlignment="Left" Height="91" Margin="10,74,0,0" VerticalAlignment="Top" Width="261" SelectionChanged="userIds_SelectionChanged"/>
-        <Label Content="Set Current User" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" Width="105"/>
-        <Button x:Name="searchNameButton" Content="Search" HorizontalAlignment="Left" Margin="175,36,0,0" VerticalAlignment="Top" Width="41" Click="searchNameButton_Click"/>
-        <DataGrid x:Name="userFriendsList" HorizontalAlignment="Left" Height="468" Margin="10,200,0,0" VerticalAlignment="Top" Width="261"/>
-        <Label Content="Friends" HorizontalAlignment="Left" Margin="10,170,0,0" VerticalAlignment="Top" FontWeight="Bold" RenderTransformOrigin="0.512,0.039"/>
+        <TabControl HorizontalAlignment="Left" Height="703" Margin="10,18,0,-0.2" VerticalAlignment="Top" Width="457">
+            <TabItem Header="TabItem">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="TabItem">
+                <Grid Background="#FFE5E5E5">
+                    <TextBox x:Name="searchName" HorizontalAlignment="Left" Height="19" Margin="10,36,0,0" TextWrapping="Wrap" Text="&lt;name&gt;" VerticalAlignment="Top" Width="142"/>
+                    <ListBox x:Name="userIds" HorizontalAlignment="Left" Height="91" Margin="10,74,0,0" VerticalAlignment="Top" Width="261" SelectionChanged="userIds_SelectionChanged"/>
+                    <Label Content="Set Current User" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" FontWeight="Bold" Width="105"/>
+                    <Button x:Name="searchNameButton" Content="Search" HorizontalAlignment="Left" Margin="175,36,0,0" VerticalAlignment="Top" Width="41" Click="searchNameButton_Click"/>
+                    <DataGrid x:Name="userFriendsList" HorizontalAlignment="Left" Height="468" Margin="10,200,0,-283.2" VerticalAlignment="Top" Width="261"/>
+                    <Label Content="Friends" HorizontalAlignment="Left" Margin="10,170,0,0" VerticalAlignment="Top" FontWeight="Bold" RenderTransformOrigin="0.512,0.039"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
 
     </Grid>
 </Window>
