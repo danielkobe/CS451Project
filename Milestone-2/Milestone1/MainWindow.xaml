@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Milestone1"
         mc:Ignorable="d"
-        Title="Milestone2" Height="629.072" Width="997.742">
-    <Grid Margin="10,0,-8,0">
-        <TabControl HorizontalAlignment="Left" Height="589" VerticalAlignment="Top" Width="979">
+        Title="Milestone2" Height="806" Width="1170">
+    <Grid Margin="10,0,10,10">
+        <TabControl Margin="0,0,1,0">
             <TabItem x:Name="userTab" Header="User Information" Grid.IsSharedSizeScope="True">
-                <Grid Background="#FFE5E5E5" Margin="0,0,-0.4,-1.2">
+                <Grid Background="#FFE5E5E5" Margin="0,0,0,-2" Height="739" VerticalAlignment="Top" HorizontalAlignment="Left" Width="1135">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="143*"/>
                         <ColumnDefinition Width="831*"/>
@@ -42,20 +42,87 @@
                 </Grid>
             </TabItem>
             <TabItem x:Name="businessTab" Header="Business Search">
-                <Grid Background="#FFE5E5E5">
+                <Grid Background="#FFE5E5E5" HorizontalAlignment="Left" Width="1136" Margin="0,0,0,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="42*"/>
-                        <ColumnDefinition Width="445*"/>
+                        <ColumnDefinition Width="113*"/>
+                        <ColumnDefinition Width="187*"/>
+                        <ColumnDefinition Width="1015*"/>
                     </Grid.ColumnDefinitions>
-                    <ComboBox x:Name="StateList" HorizontalAlignment="Left" Margin="69,45,0,0" VerticalAlignment="Top" Width="200" FontSize="14" SelectionChanged="StateListSelectionChanged" Grid.ColumnSpan="2"/>
-                    <Label x:Name="StateLabel" Content="State:" HorizontalAlignment="Left" Margin="20,41,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="-0.171,0.54"/>
-                    <DataGrid x:Name="BusinessGrid" Margin="190.1,41,0,-7.2" VerticalAlignment="Top" Height="527" HorizontalAlignment="Left" Width="681" ScrollViewer.CanContentScroll="True" Grid.Column="1"/>
-                    <ComboBox x:Name="CityList" HorizontalAlignment="Left" Margin="69,75,0,0" VerticalAlignment="Top" Width="200" FontSize="14" SelectionChanged="CityListSelectionChanged" Grid.ColumnSpan="2"/>
-                    <Label x:Name="CityLabel" Content="City:" HorizontalAlignment="Left" Margin="21,71,0,0" VerticalAlignment="Top" FontSize="14"/>
-                    <ComboBox x:Name="ZipList" HorizontalAlignment="Left" Margin="69,105,0,0" VerticalAlignment="Top" Width="200" SelectionChanged="ZipListSelectionChanged" Grid.ColumnSpan="2"/>
-                    <Label x:Name="ZipLabel" Content="Zip:" HorizontalAlignment="Left" Margin="21,100,0,0" VerticalAlignment="Top"  FontSize="14"/>
-                    <ComboBox x:Name="CategoryList" HorizontalAlignment="Left" Margin="69,134,0,0" VerticalAlignment="Top" Width="200" SelectionChanged="CategoryListSelectionChanged" Grid.ColumnSpan="2"/>
-                    <Label x:Name="CategoryLabel" Content="Category:" HorizontalAlignment="Left" Margin="0,134,0,0" VerticalAlignment="Top" FontSize="14"/>
+                    <GroupBox x:Name="groupBox" Grid.Column="1" Header="Open Businesses" Height="73" Margin="122,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" HorizontalAlignment="Left" Width="721">
+                        <Grid Margin="4,9,172,16">
+                            <Label x:Name="dayOfWeekLabel" Content="Day Of Week" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <ComboBox x:Name="dayOfWeekComboBox" HorizontalAlignment="Left" Margin="84,4,0,0" VerticalAlignment="Top" Width="120"/>
+                            <Label x:Name="fromLabel" Content="From" HorizontalAlignment="Left" Margin="225,0,0,0" VerticalAlignment="Bottom" RenderTransformOrigin="0.595,0.115"/>
+                            <ComboBox x:Name="fromComboBox" HorizontalAlignment="Left" Margin="267,4,0,0" VerticalAlignment="Top" Width="90" RenderTransformOrigin="0.122,0.636"/>
+                            <Label x:Name="toLabel" Content="To" HorizontalAlignment="Left" Margin="378,0,0,0" VerticalAlignment="Top"/>
+                            <ComboBox x:Name="toComboBox" HorizontalAlignment="Left" Margin="405,4,0,0" VerticalAlignment="Top" Width="90" RenderTransformOrigin="0.122,0.636"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox x:Name="resultGroupBox" Grid.Column="1" Header="SEARCH RESULTS" Height="520" Margin="122,88,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" HorizontalAlignment="Left" Width="721">
+                        <Grid Margin="0,0,0,-12">
+
+                            <DataGrid x:Name="BusinessGrid" Margin="0,26,10,0" VerticalAlignment="Top" Height="474" ScrollViewer.CanContentScroll="True" HorizontalAlignment="Right" Width="689"/>
+
+                            <Label x:Name="numberOfBusinessesLabel" Content="# of Businesses: " HorizontalAlignment="Left" Margin="448,0,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.132,2.365"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox x:Name="locationGroupBox" Header="Select Location" Margin="10,10,0,-12" HorizontalAlignment="Left" Width="210" Grid.ColumnSpan="2">
+                        <Grid Margin="4,4,4,4">
+                            <ComboBox x:Name="StateList" HorizontalAlignment="Left" Margin="51,5,0,0" VerticalAlignment="Top" Width="139" FontSize="14" SelectionChanged="StateListSelectionChanged"/>
+                            <Label x:Name="StateLabel" Content="State" HorizontalAlignment="Left" Margin="5,1,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="-0.171,0.54"/>
+                            <Label x:Name="CityLabel" Content="City" HorizontalAlignment="Left" Margin="5,27,0,0" VerticalAlignment="Top" FontSize="14"/>
+                            <Label x:Name="ZipLabel" Content="Zip:" HorizontalAlignment="Left" Margin="5,151,0,0" VerticalAlignment="Top"  FontSize="14" RenderTransformOrigin="1,-1.155"/>
+                            <Label x:Name="CategoryLabel" Content="Business Category" HorizontalAlignment="Left" Margin="0,246,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="0.558,0.931"/>
+                            <ListBox x:Name="CityList" HorizontalAlignment="Left" Height="85" Margin="5,61,0,0" VerticalAlignment="Top" Width="185" SelectionChanged="CityList_SelectionChanged"/>
+                            <ListBox x:Name="ZipList" HorizontalAlignment="Left" Height="61" Margin="5,180,0,0" VerticalAlignment="Top" Width="185" SelectionChanged="ZipList_SelectionChanged"/>
+                            <ListBox x:Name="CategoryList" HorizontalAlignment="Left" Height="227" Margin="5,280,0,0" VerticalAlignment="Top" Width="185"/>
+                            <Button x:Name="AddButton" Content="Add" HorizontalAlignment="Left" Margin="5,512,0,0" VerticalAlignment="Top" Width="74" Click="AddButton_Click"/>
+                            <Button x:Name="RemoveButton" Content="Remove" HorizontalAlignment="Left" Margin="115,512,0,0" VerticalAlignment="Top" Width="75" Click="RemoveButton_Click"/>
+                            <ListBox x:Name="SelectedCategoriesList" HorizontalAlignment="Left" Height="100" Margin="2,537,0,0" VerticalAlignment="Top" Width="188"/>
+                            <Button x:Name="SearchButton" Content="Search Businesses" HorizontalAlignment="Left" Margin="2,642,0,0" VerticalAlignment="Top" Width="188" Click="SearchButton_Click" Height="43" MouseEnter="SearchButton_MouseEnter" MouseLeave="SearchButton_MouseLeave">
+                                <Button.BitmapEffect>
+                                    <DropShadowBitmapEffect Color="Black" Direction="320" Softness="1" ShadowDepth="10" Opacity="0.5" />
+                                </Button.BitmapEffect>
+                            </Button>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="priceGroupBox" Grid.Column="2" Header="Filter by Price" Height="73" Margin="687,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="181">
+                        <Grid Margin="4,7,0,4" HorizontalAlignment="Left" Width="180">
+                            <CheckBox x:Name="oneDollar" Content="$" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="twoDollar" Content="$$" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="threeDollar" Content="$$$" HorizontalAlignment="Left" Margin="98,3,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="fourDollar" Content="$$$$" HorizontalAlignment="Left" Margin="98,20,0,0" VerticalAlignment="Top"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="groupBox1" Grid.Column="2" Header="Filter by Attributes" Height="240" Margin="687,88,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="181">
+                        <Grid Margin="4,17,20,0" Height="216" VerticalAlignment="Top">
+                            <CheckBox x:Name="creditCardCheckBox" Content="Accepts Credit Cards" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="reservationCheckBox" Content="Takes Reservations" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,40,0,0"/>
+                            <CheckBox x:Name="wheelchairCardCheckBox" Content="Wheelchair Accessible" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,0,0"/>
+                            <CheckBox x:Name="outdoorCheckBox" Content="Outdoor Seating " HorizontalAlignment="Left" Margin="0,60,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="goodForKidsCheckBox" Content="Good for Kids" HorizontalAlignment="Left" Margin="0,80,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="goodForGroupsCheckBox" Content="Good for Groups" HorizontalAlignment="Left" Margin="0,100,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="deliveryCheckBox" Content="Delivery" HorizontalAlignment="Left" Margin="0,120,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="takeOutCheckBox" Content="Take Out" HorizontalAlignment="Left" Margin="0,140,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="wifiCheckBox" Content="Wifi" HorizontalAlignment="Left" Margin="0,160,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="bikeParkingCheckBox" Content="Bike Parking " HorizontalAlignment="Left" Margin="0,180,0,0" VerticalAlignment="Top"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="groupBox2" Grid.Column="2" Header="Filter by Meal" Margin="687,333,0,0" VerticalAlignment="Top" Height="88" HorizontalAlignment="Left" Width="181">
+                        <Grid Margin="0,10,-12,0" Height="55" VerticalAlignment="Top">
+                            <CheckBox x:Name="checkBox" Content="Breakfast" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="checkBox1" Content="Brunch" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="checkBox2" Content="Lunch" HorizontalAlignment="Left" Margin="0,40,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="checkBox3" Content="Dinner" HorizontalAlignment="Left" Margin="85,0,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="checkBox4" Content="Desser" HorizontalAlignment="Left" Margin="85,20,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="checkBox5" Content="Late Night" HorizontalAlignment="Left" Margin="85,40,0,0" VerticalAlignment="Top"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox x:Name="groupBox3" Grid.Column="2" Header="Filter Results By" Margin="687,426,0,0" VerticalAlignment="Top" Height="46" HorizontalAlignment="Left" Width="181">
+                        <ComboBox x:Name="sortComboBox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="171" Margin="0,0,-2,0"/>
+                    </GroupBox>
                 </Grid>
             </TabItem>
         </TabControl>

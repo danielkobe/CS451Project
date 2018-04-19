@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Npgsql;
+using System.Device.Location; // Add a reference to System.Device.dll
+
 
 namespace Milestone1
 {
@@ -21,15 +23,17 @@ namespace Milestone1
     /// </summary>
     public partial class MainWindow : Window
     {
+        public CLocation myLocation;
+        
         public class Business
         {
-            public Business(string name, string address, string state, string city, string stars, string reviewCount, string avgReview, string numCheckins)
+            public Business(string name, string address, string state, string city, string distance, string stars, string reviewCount, string avgReview, string numCheckins)
             {
                 this.name = name;
                 this.address = address;
                 this.state = state;
                 this.city = city;
-
+                this.distance = distance;
                 this.stars = stars;
                 this.reviewCount = reviewCount;
                 this.avgReview = avgReview;
@@ -40,7 +44,7 @@ namespace Milestone1
             public string address { get; set; }
             public string state { get; set; }
             public string city { get; set; }
-
+            public string distance { get; set; }
             public string stars { get; set; }
             public string reviewCount { get; set; }
             public string avgReview { get; set; }
@@ -105,6 +109,39 @@ namespace Milestone1
             public string text { get; set; }
         }
 
+        public class CLocation
+        {
+            GeoCoordinateWatcher watcher;
+            EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>> e;
+            public GeoCoordinate location;
+
+            public CLocation()
+            {
+                 e = new EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>>(watcher_PositionChanged);
+            }
+
+            public void GetLocationEvent()
+            {
+                this.watcher = new GeoCoordinateWatcher();
+                this.watcher.PositionChanged += e;
+                bool started = this.watcher.TryStart(false, TimeSpan.FromMilliseconds(2000));
+                if (!started)
+                {
+                    Console.WriteLine("GeoCoordinateWatcher timed out on start.");
+                }
+            }
+
+            void watcher_PositionChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
+            {
+                this.location = e.Position.Location;
+                this.watcher.PositionChanged -= this.e;
+            }
+
+            void PrintPosition(double Latitude, double Longitude)
+            {
+                Console.WriteLine("Latitude: {0}, Longitude {1}", Latitude, Longitude);
+            }
+        }
 
         public MainWindow()
         {
@@ -113,11 +150,64 @@ namespace Milestone1
             AddColumnsToGrid();
             AddColumnsToFriendsGrid();
             AddColumnsToFriendsTipsGrid();
+            addDays();
+            addTimes();
+            addSorts();
+            SearchButton.Background = Brushes.LightGray;
+
+            myLocation = new CLocation();
+            myLocation.GetLocationEvent();
+            Console.WriteLine("Enter any key to quit.");
+            Console.ReadLine();
+        }
+    private void addDays()
+        {
+            string[] days = new string[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+            dayOfWeekComboBox.ItemsSource = days;
+        }
+
+        private void addSorts()
+        {
+            sortComboBox.DisplayMemberPath = "Key";
+            sortComboBox.SelectedValuePath = "Value";
+
+            sortComboBox.Items.Add(new KeyValuePair<string, string>("Business name (default)", "name"));
+            sortComboBox.Items.Add(new KeyValuePair<string, string>("Highest rating (stars)", "stars"));
+            sortComboBox.Items.Add(new KeyValuePair<string, string>("Most reviewed", "review_count"));
+            sortComboBox.Items.Add(new KeyValuePair<string, string>("Best review rating", "reviewrating"));
+            sortComboBox.Items.Add(new KeyValuePair<string, string>("Most check-ins", "numcheckins"));
+            sortComboBox.Items.Add(new KeyValuePair<string, string>("Nearest", "distance"));
+
+            sortComboBox.SelectedIndex = 0;
+        }
+        private void addTimes()
+        {
+            fromComboBox.DisplayMemberPath = "Key";
+            fromComboBox.SelectedValuePath = "Value";
+            toComboBox.DisplayMemberPath = "Key";
+            toComboBox.SelectedValuePath = "Value";
+            float time;
+            string timeString;
+            for(int i=0; i <= 48; i++)
+            {
+                time = (float)i / 2;
+                timeString = (i/2).ToString() + ":";
+                if (i % 2 == 0)
+                {
+                    timeString += "00";
+                }
+                else
+                {
+                    timeString += "30";
+                }
+                fromComboBox.Items.Add(new KeyValuePair<string, float>(timeString, time));
+                toComboBox.Items.Add(new KeyValuePair<string, float>(timeString, time));
+            }
         }
 
         private string BuildConnString()
         {
-            return "Server=localhost; Database=yelpdb; Port=5432; Username=postgres; Password=Compaq27";
+            return "Server=localhost; Database=yelpdb; Port=5433; Username=postgres; Password=Bix53z7h4m";
         }
 
         public void AddStates()
@@ -147,186 +237,51 @@ namespace Milestone1
             DataGridTextColumn col1 = new DataGridTextColumn();
             col1.Header = "Business Name";
             col1.Binding = new Binding("name");
-            col1.Width = 150;
             BusinessGrid.Columns.Add(col1);
 
             DataGridTextColumn col2 = new DataGridTextColumn();
             col2.Header = "Address";
             col2.Binding = new Binding("address");
-            col2.Width = 200;
             BusinessGrid.Columns.Add(col2);
 
             DataGridTextColumn col3 = new DataGridTextColumn();
             col3.Header = "City";
             col3.Binding = new Binding("city");
-            col3.Width = 170;
             BusinessGrid.Columns.Add(col3);
 
             DataGridTextColumn col4 = new DataGridTextColumn();
             col4.Header = "State";
             col4.Binding = new Binding("state");
-            col4.Width = 50;
+            //col4.Width = 50;
             BusinessGrid.Columns.Add(col4);
 
             DataGridTextColumn col5 = new DataGridTextColumn();
-            col5.Header = "Distance";
+            col5.Header = "Distance\n(miles)";
             col5.Binding = new Binding("distance");
-            col5.Width = 100;
             BusinessGrid.Columns.Add(col5);
 
             DataGridTextColumn col6 = new DataGridTextColumn();
             col6.Header = "Stars";
             col6.Binding = new Binding("stars");
-            col6.Width = 50;
             BusinessGrid.Columns.Add(col6);
 
             DataGridTextColumn col7 = new DataGridTextColumn();
-            col7.Header = "# of Reviews";
+            col7.Header = "# of\nReviews";
             col7.Binding = new Binding("reviewCount");
-            col7.Width = 100;
             BusinessGrid.Columns.Add(col7);
 
             DataGridTextColumn col8 = new DataGridTextColumn();
-            col8.Header = "Avg Review Rating";
+            col8.Header = "Avg\nReview\nRating";
             col8.Binding = new Binding("avgReview");
-            col8.Width = 100;
             BusinessGrid.Columns.Add(col8);
 
             DataGridTextColumn col9 = new DataGridTextColumn();
-            col9.Header = "Total Checkins";
+            col9.Header = "Total\nCheckins";
             col9.Binding = new Binding("numCheckins");
-            col9.Width = 100;
             BusinessGrid.Columns.Add(col9);
         }
 
-        private void StateListSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            CityList.Items.Clear();
 
-            using (var conn = new NpgsqlConnection(BuildConnString()))
-            {
-                conn.Open();
-                using (var cmd = new NpgsqlCommand())
-                {
-                    cmd.Connection = conn;
-                    cmd.CommandText = "SELECT DISTINCT city FROM businessTable WHERE state = '" + StateList.SelectedItem.ToString() + "' ORDER BY city;";
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            CityList.Items.Add(reader.GetString(0));
-                        }
-                    }
-                }
-
-                conn.Close();
-            }
-
-        }
-
-
-        private void CityListSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (CityList.SelectedItem != null)
-            {
-                ZipList.Items.Clear();
-                using (var conn = new NpgsqlConnection(BuildConnString()))
-                {
-                    conn.Open();
-                    using (var cmd = new NpgsqlCommand())
-                    {
-                        cmd.Connection = conn;
-                        cmd.CommandText = "SELECT DISTINCT postal_code FROM businessTable WHERE city = '" + CityList.SelectedItem.ToString() + "' AND state = '" + StateList.SelectedItem.ToString() + "' ORDER BY postal_code;";
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                ZipList.Items.Add(reader.GetString(0));
-                            }
-                        }
-                    }
-
-                    conn.Close();
-                }
-            }
-        }
-
-        private void ZipListSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ZipList.SelectedItem != null)
-            {
-                CategoryList.Items.Clear();
-                using (var conn = new NpgsqlConnection(BuildConnString()))
-                {
-                    conn.Open();
-                    using (var cmd = new NpgsqlCommand())
-                    {
-                        cmd.Connection = conn;
-                        cmd.CommandText = "SELECT DISTINCT category_type " +
-                                          "FROM categoriesTable, " +
-                                          "(SELECT business_id FROM businessTable WHERE state = '" + StateList.SelectedItem.ToString() + "' AND city = '" + CityList.SelectedItem.ToString() + "' AND postal_code = " + ZipList.SelectedItem.ToString() + ") " +
-                                          "AS temp " +
-                                          "WHERE temp.business_id = categoriesTable.business_id;";
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                CategoryList.Items.Add(reader.GetString(0));
-                            }
-                        }
-                    }
-
-
-                    BusinessGrid.Items.Clear();
-                    using (var cmd = new NpgsqlCommand())
-                    {
-                        cmd.Connection = conn;
-                        cmd.CommandText = "SELECT * FROM businessTable WHERE city = '" + CityList.SelectedItem.ToString() + "' AND state = '" + StateList.SelectedItem.ToString() + "' AND postal_code = '" + ZipList.SelectedItem.ToString() + "';";
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                BusinessGrid.Items.Add(new Business(reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetDouble(8).ToString(), reader.GetString(9), reader.GetDouble(12).ToString(), reader.GetString(11)));
-                            }
-                        }
-                    }
-
-
-                    conn.Close();
-                }
-            }
-
-        }
-
-        private void CategoryListSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (CategoryList.SelectedItem != null)
-            {
-                using (var conn = new NpgsqlConnection(BuildConnString()))
-                {
-                    conn.Open();
-                    BusinessGrid.Items.Clear();
-                    using (var cmd = new NpgsqlCommand())
-                    {
-                        cmd.Connection = conn;
-                        cmd.CommandText = "SELECT * " +
-                                          "FROM categoriesTable, " +
-                                          "(SELECT * FROM businessTable WHERE state = '" + StateList.SelectedItem.ToString() + "' AND city = '" + CityList.SelectedItem.ToString() + "' AND postal_code = " + ZipList.SelectedItem.ToString() + ") " +
-                                          "AS temp " +
-                                          "WHERE temp.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + CategoryList.SelectedItem.ToString() + "';";
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                BusinessGrid.Items.Add(new Business(reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6), reader.GetDouble(10).ToString(), reader.GetString(11), reader.GetDouble(14).ToString(), reader.GetString(13)));
-                            }
-                        }
-                    }
-
-                    conn.Close();
-                }
-            }
-        }
 
 
         public void getUserIds(string userName)
@@ -506,6 +461,222 @@ namespace Milestone1
             }
         }
 
+        /////////////////////////// Business Table //////////////////////////////////
+        private void StateListSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CityList.Items.Clear();
+            ZipList.Items.Clear();
+            CategoryList.Items.Clear();
+            SelectedCategoriesList.Items.Clear();
+
+            using (var conn = new NpgsqlConnection(BuildConnString()))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT DISTINCT city FROM businessTable WHERE state = '" + StateList.SelectedItem.ToString() + "' ORDER BY city;";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            CityList.Items.Add(reader.GetString(0));
+                        }
+                    }
+                }
+
+                conn.Close();
+            }
+
+        }
+
+        private void CityList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ZipList.Items.Clear();
+            CategoryList.Items.Clear();
+            SelectedCategoriesList.Items.Clear();
+
+            if (CityList.SelectedItem != null)
+            {
+                ZipList.Items.Clear();
+                using (var conn = new NpgsqlConnection(BuildConnString()))
+                {
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = conn;
+                        cmd.CommandText = "SELECT DISTINCT postal_code FROM businessTable WHERE city = '" + CityList.SelectedItem.ToString() + "' AND state = '" + StateList.SelectedItem.ToString() + "' ORDER BY postal_code;";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ZipList.Items.Add(reader.GetString(0));
+                            }
+                        }
+                    }
+
+                    conn.Close();
+                }
+            }
+        }
+
+        private void ZipList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CategoryList.Items.Clear();
+            SelectedCategoriesList.Items.Clear();
+
+            if (ZipList.SelectedItem != null)
+            {
+                CategoryList.Items.Clear();
+                using (var conn = new NpgsqlConnection(BuildConnString()))
+                {
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = conn;
+                        cmd.CommandText = "SELECT DISTINCT category_type " +
+                                          "FROM categoriesTable, " +
+                                          "(SELECT business_id FROM businessTable WHERE state = '" + StateList.SelectedItem.ToString() + "' AND city = '" + CityList.SelectedItem.ToString() + "' AND postal_code = " + ZipList.SelectedItem.ToString() + ") " +
+                                          "AS temp " +
+                                          "WHERE temp.business_id = categoriesTable.business_id;";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                CategoryList.Items.Add(reader.GetString(0));
+                            }
+                        }
+                    }
+
+
+                    BusinessGrid.Items.Clear();
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = conn;
+                        cmd.CommandText = "SELECT * FROM businessTable WHERE city = '" + CityList.SelectedItem.ToString() + "' AND state = '" + StateList.SelectedItem.ToString() + "' AND postal_code = '" + ZipList.SelectedItem.ToString() + "';";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                //BusinessGrid.Items.Add(new Business(reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), distance, reader.GetDouble(8).ToString(), reader.GetString(9), reader.GetDouble(12).ToString(), reader.GetString(11)));
+                            }
+                        }
+                    }
+
+                    numberOfBusinessesLabel.Content = "# of Businesses: " + BusinessGrid.Items.Count.ToString();
+                    conn.Close();
+                }
+            }
+        }
+
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (CategoryList.SelectedItem != null && !SelectedCategoriesList.Items.Contains(CategoryList.SelectedItem.ToString()))
+            {
+                SelectedCategoriesList.Items.Add(CategoryList.SelectedItem.ToString());
+            }
+            
+        }
+
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedCategoriesList.SelectedItem != null)
+            {
+                SelectedCategoriesList.Items.Remove(SelectedCategoriesList.SelectedItem.ToString());
+            }
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedCategoriesList.Items.Count != 0)
+            {
+                using (var conn = new NpgsqlConnection(BuildConnString()))
+                {
+                    conn.Open();
+                    BusinessGrid.Items.Clear();
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        double latitude, longitude;
+                        cmd.Connection = conn;
+                        cmd.CommandText = "SELECT * " +
+                                          "FROM " +
+                                          "(SELECT * FROM businessTable WHERE state = '" + StateList.SelectedItem.ToString() + "' AND city = '" + CityList.SelectedItem.ToString() + "' AND postal_code = " + ZipList.SelectedItem.ToString() + ") " +
+                                          "AS b " +
+                                          "WHERE b IN (" +
+                                          "SELECT b " +
+                                          "FROM categoriesTable " +
+                                          "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(0).ToString() + "'";
+
+
+                        if (SelectedCategoriesList.Items.Count>1)
+                        {
+                            for (int i = 1; i < SelectedCategoriesList.Items.Count; i++)
+                            {
+                                cmd.CommandText += "AND b IN(" + 
+                                                   "SELECT b " +
+                                                   "FROM categoriesTable " +
+                                                   "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(i).ToString() + "'";
+                            }
+                        }
+
+                        if (dayOfWeekComboBox.SelectedItem != null && fromComboBox != null && toComboBox != null)
+                        {
+                            cmd.CommandText += "AND b IN (" +
+                                               "SELECT b " +
+                                               "FROM businessTimesTable, businessTable " +
+                                               "WHERE b.business_id = businessTimesTable.business_id AND businessTimesTable.day = '" + dayOfWeekComboBox.SelectedItem.ToString() + "'" +
+                                               "AND(businessTimesTable.open <= " + ((KeyValuePair<string, float>)fromComboBox.SelectedItem).Value.ToString() + ") AND(businessTimesTable.close >= " + ((KeyValuePair<string, float>)toComboBox.SelectedItem).Value.ToString() + " OR businessTimesTable.close = 0))";
+                        }
+
+                        for (int j = 0; j< SelectedCategoriesList.Items.Count; j++)
+                        {
+                            cmd.CommandText += ")";
+                        }
+
+                        string sortBy = ((KeyValuePair<string, string>)sortComboBox.SelectedItem).Value.ToString();
+
+                        if (sortComboBox.SelectedItem != null)
+                        {
+                            cmd.CommandText += " ORDER BY " + sortBy;
+                        }
+
+                        //descending order for all sorts besides name and distance
+                        if(sortBy!="name" && sortBy != "distance")
+                        {
+                            cmd.CommandText += " DESC";
+                        }
+        
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                latitude = reader.GetDouble(6);
+                                longitude = reader.GetDouble(7);
+                                var avgReview = reader.GetDouble(12);
+                                string avgReviewString = string.Format("{0:F2}", avgReview);
+                                var businessLocation = new GeoCoordinate(latitude, longitude);
+                                var distance = (this.myLocation.location.GetDistanceTo(businessLocation)* 0.00062137119223733);
+                                var distanceString = string.Format("{0:F2}", distance);
+                                BusinessGrid.Items.Add(new Business(reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), distanceString, reader.GetDouble(8).ToString(), reader.GetString(9), avgReviewString, reader.GetString(11)));
+
+                            }
+                        }
+                    }
+                    numberOfBusinessesLabel.Content = "# of Businesses: " + BusinessGrid.Items.Count.ToString();
+                    conn.Close();
+                }
+            }
+        }
+
+        private void SearchButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void SearchButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            SearchButton.Background = Brushes.LightGray;
+        }
     }
 
 

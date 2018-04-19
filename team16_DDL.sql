@@ -73,7 +73,8 @@ CREATE TABLE categoriesTable (
 CREATE TABLE businessTimesTable (
 	business_id VARCHAR(100),
 	day VARCHAR(100),
-	time VARCHAR(100) NOT NULL,
+	open FLOAT NOT NULL,
+	close FLOAT NOT NULL,
 	PRIMARY KEY (business_id, day)
 );
 
@@ -81,7 +82,7 @@ CREATE TABLE attributesTable (
 	business_id VARCHAR(100),
 	attribute_type VARCHAR(100) NOT NULL,
 	attribute_value VARCHAR(100) NOT NULL,
-	PRIMARY KEY (business_id, attribute_type, attribute_value),
+	PRIMARY KEY (business_id, attribute_type),
 	FOREIGN KEY (business_id) REFERENCES businessTable(business_id)
 );
 

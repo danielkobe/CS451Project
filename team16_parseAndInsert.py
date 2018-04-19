@@ -171,7 +171,7 @@ def insert2BusinessTableHours():
         #connect to yelpdb database on postgres server using psycopg2
         #TODO: update the database name, username, and password
         try:
-            conn = psycopg2.connect("dbname='yelpdb' user='postgres' host='localhost' password='Compaq27'")
+            conn = psycopg2.connect("dbname='yelpdb' user='postgres' host='localhost' port= 5433 password='Bix53z7h4m'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -185,11 +185,20 @@ def insert2BusinessTableHours():
             hours = data['hours']
             for day, hours in hours.items():
                 split_hours = hours.split('-')
-                sql_str = "INSERT INTO businessTimesTable (business_id,day,time) " \
-                          "VALUES ('" + cleanStr4SQL(data['business_id']) + "','" + str(day) + "','" + str(hours) + "');"
+                openSplit = split_hours[0].split(':')
+                openTime = float(openSplit[0])
+                if openSplit[1] == '30':
+                    openTime+=.5
+                closeSplit = split_hours[1].split(':')
+                closeTime = float(closeSplit[0])
+                if closeSplit[1] == '30':
+                    closeTime += .5
+                sql_str = "INSERT INTO businessTimesTable (business_id,day,open,close) " \
+                          "VALUES ('" + cleanStr4SQL(data['business_id']) + "','" + str(day) + "'," + str(openTime) + "," + str(closeTime) + ");"
                 try:
                     cur.execute(sql_str)
                 except:
+                    print(sql_str)
                     print("Insert to businessTimesTable failed!")
                 conn.commit()
 
@@ -401,9 +410,9 @@ def insert2CheckinTable():
 #insert2BusinessTable()
 #insert2BusinessTableCategories()
 #insert2BusinessTableAtrributes()
-#insert2BusinessTableHours()
+insert2BusinessTableHours()
 #insert2UserTable()
 #insert2FriendsTable()
 #insert2ReviewTable()
-insert2CheckinTable()
+#insert2CheckinTable()
 
