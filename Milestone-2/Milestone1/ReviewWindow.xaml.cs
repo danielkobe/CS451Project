@@ -136,9 +136,10 @@ namespace Milestone1
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = "SELECT r.date, r.name, r.stars, r.text, r.funny, r.useful, r.cool " +
-                                      "FROM(reviewtable NATURAL JOIN usertable) as r " + 
-                                      "WHERE r.business_id = '" + business_id + "'";
+                    cmd.CommandText = "SELECT r.date, u.name, r.stars, r.text, r.funny, r.useful, r.cool " +
+                                      "FROM reviewtable AS r, usertable AS u " + 
+                                      "WHERE r.business_id = '" + business_id + "' AND u.user_id=r.user_id " + 
+                                      "ORDER BY u.name";
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())

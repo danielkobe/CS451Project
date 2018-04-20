@@ -414,7 +414,7 @@ def insert2CheckinTable():
 
 #insert2BusinessTable()
 #insert2BusinessTableCategories()
-insert2BusinessTableAtrributes()
+#insert2BusinessTableAtrributes()
 #insert2BusinessTableHours()
 #insert2UserTable()
 #insert2FriendsTable()
