@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bd207ace-0987-432e-9165-213632bffc8d" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/bin/Debug/Milestone1.exe" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/bin/Debug/Milestone1.exe" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/bin/Debug/Milestone1.pdb" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/bin/Debug/Milestone1.pdb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/Milestone1.exe" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/Milestone1.exe" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/Milestone1.pdb" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/Milestone1.pdb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/ReviewWindow.xaml.cs" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/ReviewWindow.xaml.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/team16_parseAndInsert.py" afterPath="$PROJECT_DIR$/team16_parseAndInsert.py" />
-    </list>
+    <list default="true" id="bd207ace-0987-432e-9165-213632bffc8d" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,7 +28,7 @@
       <file leaf-file-name="team16_parseAndInsert.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/team16_parseAndInsert.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="381">
+            <state relative-caret-position="685">
               <caret line="418" column="17" lean-forward="false" selection-start-line="418" selection-start-column="1" selection-end-line="418" selection-end-column="17" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
@@ -300,14 +292,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="0" width="1934" height="1047" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33260393" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33260393" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -347,7 +339,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/team16_parseAndInsert.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
+        <state relative-caret-position="685">
           <caret line="418" column="17" lean-forward="false" selection-start-line="418" selection-start-column="1" selection-end-line="418" selection-end-column="17" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
