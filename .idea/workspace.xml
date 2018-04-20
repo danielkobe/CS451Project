@@ -2,8 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bd207ace-0987-432e-9165-213632bffc8d" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/bin/Debug/Milestone1.exe" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/bin/Debug/Milestone1.exe" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/bin/Debug/Milestone1.pdb" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/bin/Debug/Milestone1.pdb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/MainWindow.baml" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/MainWindow.baml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/Milestone1.exe" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/Milestone1.exe" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/Milestone1.g.resources" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/Milestone1.g.resources" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/Milestone1.pdb" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/Milestone1.pdb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/team16_parseAndInsert.py" afterPath="$PROJECT_DIR$/team16_parseAndInsert.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/MainWindow.xaml" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/MainWindow.xaml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/MainWindow.xaml.cs" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/MainWindow.xaml.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/MainWindow.g.cs" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/MainWindow.g.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/MainWindow.g.i.cs" afterPath="$PROJECT_DIR$/Milestone-2/Milestone1/obj/Debug/MainWindow.g.i.cs" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -31,8 +40,8 @@
       <file leaf-file-name="team16_parseAndInsert.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/team16_parseAndInsert.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4489">
-              <caret line="126" column="74" lean-forward="false" selection-start-line="126" selection-start-column="52" selection-end-line="126" selection-end-column="74" />
+            <state relative-caret-position="442">
+              <caret line="386" column="20" lean-forward="false" selection-start-line="386" selection-start-column="20" selection-end-line="386" selection-end-column="76" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -295,7 +304,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24973656" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -343,8 +352,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/team16_parseAndInsert.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4489">
-          <caret line="126" column="74" lean-forward="false" selection-start-line="126" selection-start-column="52" selection-end-line="126" selection-end-column="74" />
+        <state relative-caret-position="442">
+          <caret line="386" column="20" lean-forward="false" selection-start-line="386" selection-start-column="20" selection-end-line="386" selection-end-column="76" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>

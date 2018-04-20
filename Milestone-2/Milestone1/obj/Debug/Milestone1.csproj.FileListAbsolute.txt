@@ -131,3 +131,5 @@ C:\Users\danie\Desktop\Repos\CS451Project\Milestone-2\Milestone1\obj\Debug\Miles
 C:\Users\danie\Desktop\backupcs451\Milestone-2\Milestone1\bin\Debug\Milestone1.exe.config
 C:\Users\danie\Desktop\backupcs451\Milestone-2\Milestone1\obj\Debug\Milestone1.exe
 C:\Users\danie\Desktop\backupcs451\Milestone-2\Milestone1\obj\Debug\Milestone1.pdb
+C:\Users\danie\Desktop\Repos\CS451Project\Milestone-2\Milestone1\obj\Debug\ReviewWindow.g.cs
+C:\Users\danie\Desktop\Repos\CS451Project\Milestone-2\Milestone1\obj\Debug\ReviewWindow.baml

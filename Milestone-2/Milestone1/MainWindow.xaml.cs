@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Npgsql;
 using System.Device.Location; // Add a reference to System.Device.dll
-
+using System.Data;
 
 namespace Milestone1
 {
@@ -26,6 +26,7 @@ namespace Milestone1
         public CLocation myLocation;
         public List<string> Attributes = new List<string>();
         public List<string> Prices = new List<string>();
+        public Business selectedBusiness;
 
 
         public class Business
@@ -162,8 +163,10 @@ namespace Milestone1
             myLocation.GetLocationEvent();
             Console.WriteLine("Enter any key to quit.");
             Console.ReadLine();
+            checkinButton.IsEnabled = false;
+
         }
-    private void addDays()
+        private void addDays()
         {
             string[] days = new string[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
             dayOfWeekComboBox.ItemsSource = days;
@@ -624,7 +627,7 @@ namespace Milestone1
                             }
                         }
 
-                        if (dayOfWeekComboBox.SelectedItem != null && fromComboBox != null && toComboBox != null)
+                        if (dayOfWeekComboBox.SelectedItem != null && fromComboBox.SelectedItem != null && toComboBox.SelectedItem != null)
                         {
                             cmd.CommandText += "AND b IN (" +
                                                "SELECT b " +
@@ -797,6 +800,125 @@ namespace Milestone1
         private void SearchButton_MouseLeave(object sender, MouseEventArgs e)
         {
             SearchButton.Background = Brushes.LightGray;
+        }
+
+        private void checkinButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(businessTextBox.Text!="Business Name")
+            {
+
+                var time = DateTime.Now.TimeOfDay;
+                var splitTime = time.ToString().Split(':');
+                var hour = Int32.Parse(splitTime[0]);
+
+                DateTime ClockInfoFromSystem = DateTime.Now;
+                var dayOfWeek = (int)ClockInfoFromSystem.DayOfWeek;
+                string day = "";
+                string timeOfDay = "";
+                string business_id = "";
+                switch (dayOfWeek)
+                {
+                    case 1:
+                        day = "Monday";
+                        break;
+                    case 2:
+                        day = "Tuesday";
+                        break;
+                    case 3:
+                        day = "Wednesday";
+                        break;
+                    case 4:
+                        day = "Thursday";
+                        break;
+                    case 5:
+                        day = "Friday";
+                        break;
+                    case 6:
+                        day = "Saturday";
+                        break;
+                    case 7:
+                        day = "Sunday";
+                        break;
+                }
+
+                if(6 <= hour && hour < 12)
+                {
+                    timeOfDay = "morning";
+                }
+                if (12 <= hour && hour < 17)
+                {
+                    timeOfDay = "afternoon";
+                }
+
+                if (17 <= hour && hour < 23)
+                {
+                    timeOfDay = "evening";
+                }
+                if (6 > hour || hour >= 23)
+                {
+                    timeOfDay = "night";
+                }
+
+                using (var conn = new NpgsqlConnection(BuildConnString()))
+                {
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = conn;
+                        cmd.CommandText = "SELECT business_id from businesstable WHERE name = '" + selectedBusiness.name + "' AND address = '" + selectedBusiness.address + "'";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                business_id = reader.GetString(0);
+                            }
+                        }
+                    }
+
+                    conn.Close();
+                }
+
+                using (var conn = new NpgsqlConnection(BuildConnString()))
+                {
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = conn;
+                        cmd.CommandText = "UPDATE checkintable " +
+                                          "SET " + timeOfDay + " = " + timeOfDay + " + 1 " +
+                                          "WHERE business_id = '" + business_id + "' AND day = '" + day + "'";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            
+                        }
+                    }
+
+                    conn.Close();
+                }
+                
+            }
+        }
+
+        private void BusinessGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+        {
+            if (BusinessGrid.SelectedItems.Count>0)
+            {
+                selectedBusiness = (Business)BusinessGrid.SelectedItems[0];
+                businessTextBox.Text = selectedBusiness.name;
+                checkinButton.IsEnabled = true;
+            }
+        }
+
+        private void showCheckinsButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+            
+        }
+
+        private void showReviewsButton_Click(object sender, RoutedEventArgs e)
+        {
+            ReviewWindow window = new ReviewWindow(selectedBusiness.name, selectedBusiness.address);
+            window.Show();
         }
     }
 
