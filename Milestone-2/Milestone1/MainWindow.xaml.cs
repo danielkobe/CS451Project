@@ -25,6 +25,8 @@ namespace Milestone1
     {
         public CLocation myLocation;
         public List<string> Attributes = new List<string>();
+        public List<string> Prices = new List<string>();
+
 
         public class Business
         {
@@ -642,7 +644,18 @@ namespace Milestone1
                             }
                         }
 
-                        for (int j = 0; j<(SelectedCategoriesList.Items.Count + Attributes.Count); j++)
+                        if (Prices.Count > 0)
+                        {
+                            for (int i = 0; i < Prices.Count; i++)
+                            {
+                                cmd.CommandText += "AND b IN ( " +
+                                                  "SELECT b " +
+                                                  "FROM attributesTable AS a " +
+                                                  "WHERE a.business_id = b.business_id AND a.attribute_type = 'RestaurantsPriceRange2' AND a.attribute_value = '" + Prices[i] + "' ";
+                            }
+                        }
+
+                        for (int j = 0; j<(SelectedCategoriesList.Items.Count + Attributes.Count + Prices.Count); j++)
                         {
                             cmd.CommandText += ")";
                         }
@@ -686,23 +699,24 @@ namespace Milestone1
         private void CheckAttributeCheckboxes()
         {
             Attributes.Clear();
+            Prices.Clear();
 
             //prices
             if (oneDollar.IsChecked == true)
             {
-                Attributes.Add("RestaurantsPriceRange1");
+                Prices.Add("1");
             }
             if (twoDollar.IsChecked == true)
             {
-                Attributes.Add("RestaurantsPriceRange2");
+                Prices.Add("2");
             }
             if (threeDollar.IsChecked == true)
             {
-                Attributes.Add("RestaurantsPriceRange3");
+                Prices.Add("3");
             }
             if (fourDollar.IsChecked == true)
             {
-                Attributes.Add("RestaurantsPriceRange4");
+                Prices.Add("4");
             }
 
             //meal types

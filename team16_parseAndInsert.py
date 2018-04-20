@@ -109,7 +109,7 @@ def insert2BusinessTableAtrributes():
         #connect to yelpdb database on postgres server using psycopg2
         #TODO: update the database name, username, and password
         try:
-            conn = psycopg2.connect("dbname='yelpdb' user='postgres' host='localhost' password='Bix53z7h4m'")
+            conn = psycopg2.connect("dbname='yelpdb' port=5433 user='postgres' host='localhost' password='Bix53z7h4m'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -124,11 +124,16 @@ def insert2BusinessTableAtrributes():
             for attr, val in attributes.items():
                 # non-nested attribute
                 if type(val) != dict:
-                    if (type(val) == int):
+                    if (type(val) == int and attr!="RestaurantsPriceRange2"):
                         val = int2BoolStr(val)
+                    if val=="no":
+                        val = False
+                    if val=="yes":
+                        val = True
 
                     sql_str = "INSERT INTO attributesTable (business_id,attribute_type, attribute_value) " \
                               "VALUES ('" + cleanStr4SQL(data['business_id']) + "','" + str(attr) + "','" + str(val) + "');"
+
                     try:
                         cur.execute(sql_str)
                     except:
@@ -409,8 +414,8 @@ def insert2CheckinTable():
 
 #insert2BusinessTable()
 #insert2BusinessTableCategories()
-#insert2BusinessTableAtrributes()
-insert2BusinessTableHours()
+insert2BusinessTableAtrributes()
+#insert2BusinessTableHours()
 #insert2UserTable()
 #insert2FriendsTable()
 #insert2ReviewTable()
