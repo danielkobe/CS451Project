@@ -24,7 +24,8 @@ namespace Milestone1
     public partial class MainWindow : Window
     {
         public CLocation myLocation;
-        
+        public List<string> Attributes = new List<string>();
+
         public class Business
         {
             public Business(string name, string address, string state, string city, string distance, string stars, string reviewCount, string avgReview, string numCheckins)
@@ -589,6 +590,7 @@ namespace Milestone1
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
+            CheckAttributeCheckboxes();
             if (SelectedCategoriesList.Items.Count != 0)
             {
                 using (var conn = new NpgsqlConnection(BuildConnString()))
@@ -624,12 +626,23 @@ namespace Milestone1
                         {
                             cmd.CommandText += "AND b IN (" +
                                                "SELECT b " +
-                                               "FROM businessTimesTable, businessTable " +
+                                               "FROM businessTimesTable " +
                                                "WHERE b.business_id = businessTimesTable.business_id AND businessTimesTable.day = '" + dayOfWeekComboBox.SelectedItem.ToString() + "'" +
                                                "AND(businessTimesTable.open <= " + ((KeyValuePair<string, float>)fromComboBox.SelectedItem).Value.ToString() + ") AND(businessTimesTable.close >= " + ((KeyValuePair<string, float>)toComboBox.SelectedItem).Value.ToString() + " OR businessTimesTable.close = 0))";
                         }
 
-                        for (int j = 0; j< SelectedCategoriesList.Items.Count; j++)
+                        if (Attributes.Count > 0)
+                        {
+                            for(int i=0; i < Attributes.Count; i++)
+                            {
+                                cmd.CommandText += "AND b IN ( " +
+                                                  "SELECT b " +
+                                                  "FROM attributesTable AS a " +
+                                                  "WHERE a.business_id = b.business_id AND a.attribute_type = '" + Attributes[i] + "' AND a.attribute_value = 'True' ";
+                            }
+                        }
+
+                        for (int j = 0; j<(SelectedCategoriesList.Items.Count + Attributes.Count); j++)
                         {
                             cmd.CommandText += ")";
                         }
@@ -657,6 +670,7 @@ namespace Milestone1
                                 string avgReviewString = string.Format("{0:F2}", avgReview);
                                 var businessLocation = new GeoCoordinate(latitude, longitude);
                                 var distance = (this.myLocation.location.GetDistanceTo(businessLocation)* 0.00062137119223733);
+                                //var distance = (this.myLocation.location.GetDistanceTo(businessLocation) / 1609.344);
                                 var distanceString = string.Format("{0:F2}", distance);
                                 BusinessGrid.Items.Add(new Business(reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), distanceString, reader.GetDouble(8).ToString(), reader.GetString(9), avgReviewString, reader.GetString(11)));
 
@@ -667,6 +681,99 @@ namespace Milestone1
                     conn.Close();
                 }
             }
+        }
+
+        private void CheckAttributeCheckboxes()
+        {
+            Attributes.Clear();
+
+            //prices
+            if (oneDollar.IsChecked == true)
+            {
+                Attributes.Add("RestaurantsPriceRange1");
+            }
+            if (twoDollar.IsChecked == true)
+            {
+                Attributes.Add("RestaurantsPriceRange2");
+            }
+            if (threeDollar.IsChecked == true)
+            {
+                Attributes.Add("RestaurantsPriceRange3");
+            }
+            if (fourDollar.IsChecked == true)
+            {
+                Attributes.Add("RestaurantsPriceRange4");
+            }
+
+            //meal types
+            if (breakfastCheckBox.IsChecked==true)
+            {
+                Attributes.Add("breakfast");
+            }
+
+            if (brunchCheckBox.IsChecked == true)
+            {
+                Attributes.Add("brunch");
+            }
+            if (lunchCheckbox.IsChecked == true)
+            {
+                Attributes.Add("lunch");
+            }
+            if (dinnerCheckBox.IsChecked == true)
+            {
+                Attributes.Add("dinner");
+            }
+            if (dessertrCheckBox.IsChecked == true)
+            {
+                Attributes.Add("dessert");
+            }
+            if (lateNightCheckBox.IsChecked == true)
+            {
+                Attributes.Add("latenight");
+            }
+
+            //misc attributes    
+            if (creditCardCheckBox.IsChecked == true)
+            {
+                Attributes.Add("BusinessAcceptsCreditCards");
+            }
+            if (reservationCheckBox.IsChecked == true)
+            {
+                Attributes.Add("RestaurantsReservations");
+            }
+            if (wheelchairAccesibleCheckBox.IsChecked == true)
+            {
+                Attributes.Add("WheelchairAccessible");
+            }
+            if (outdoorCheckBox.IsChecked == true)
+            {
+                Attributes.Add("OutdoorSeating");
+            }
+            if (goodForKidsCheckBox.IsChecked == true)
+            {
+                Attributes.Add("GoodForKids");
+            }
+            if (goodForGroupsCheckBox.IsChecked == true)
+            {
+                Attributes.Add("RestaurantsGoodForGroups");
+            }
+            if (deliveryCheckBox.IsChecked == true)
+            {
+                Attributes.Add("RestaurantsDelivery");
+            }
+            if (takeOutCheckBox.IsChecked == true)
+            {
+                Attributes.Add("RestaurantsTakeOut");
+            }
+            if (wifiCheckBox.IsChecked == true)
+            {
+                Attributes.Add("WiFi");
+            }
+            if (bikeParkingCheckBox.IsChecked == true)
+            {
+                Attributes.Add("BikeParking");
+            }
+            
         }
 
         private void SearchButton_MouseEnter(object sender, MouseEventArgs e)
