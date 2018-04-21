@@ -28,11 +28,14 @@ namespace Milestone1
         public List<string> Prices = new List<string>();
         public Business selectedBusiness;
 
+        string id;
+        //string friendId;
 
         public class Business
         {
-            public Business(string name, string address, string state, string city, string distance, string stars, string reviewCount, string avgReview, string numCheckins)
+            public Business(string business_id, string name, string address, string state, string city, string distance, string stars, string reviewCount, string avgReview, string numCheckins)
             {
+                this.business_id = business_id;
                 this.name = name;
                 this.address = address;
                 this.state = state;
@@ -44,6 +47,7 @@ namespace Milestone1
                 this.numCheckins = numCheckins;
             }
 
+            public string business_id { get; set; }
             public string name { get; set; }
             public string address { get; set; }
             public string state { get; set; }
@@ -86,15 +90,17 @@ namespace Milestone1
 
         public class Friend
         {
-            public Friend(string name, string avgStar, string yelpSince)
+            public Friend(string name, string avgStar, string yelpSince, string friend_id)
             {
                 this.name = name;
                 this.avgStar = avgStar;
                 this.yelpSince = yelpSince;
+                this.friend_id = friend_id;
             }
             public string name { get; set; }
             public string avgStar { get; set; }
             public string yelpSince { get; set; }
+            public string friend_id { get; set; }
         }
 
         public class FriendReview
@@ -213,7 +219,8 @@ namespace Milestone1
 
         private string BuildConnString()
         {
-            return "Server=localhost; Database=yelpdb; Port=5433; Username=postgres; Password=Bix53z7h4m";
+            //return "Server=localhost; Database=yelpdb; Port=5433; Username=postgres; Password=Bix53z7h4m";
+            return "Server=localhost; Database=yelpdb; Port=5432; Username=postgres; Password=Compaq27";
         }
 
         public void AddStates()
@@ -328,13 +335,13 @@ namespace Milestone1
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = "SELECT temp.name, temp.average_stars, temp.yelping_since FROM userTable as U, friendsTable as F, (SELECT * FROM userTable) as temp WHERE U.user_id = '" + id + "' AND U.user_id = F.user_id AND F.friend_id = temp.user_id;";
+                    cmd.CommandText = "SELECT temp.name, temp.average_stars, temp.yelping_since, F.friend_id FROM userTable as U, friendsTable as F, (SELECT * FROM userTable) as temp WHERE U.user_id = '" + id + "' AND U.user_id = F.user_id AND F.friend_id = temp.user_id ORDER BY temp.name;";
 
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            userFriendsList.Items.Add(new Friend(reader.GetString(0), reader.GetDouble(1).ToString(), reader.GetString(2)));
+                            userFriendsList.Items.Add(new Friend(reader.GetString(0), reader.GetDouble(1).ToString(), reader.GetString(2), reader.GetString(3)));
                         }
                     }
                 }
@@ -366,7 +373,7 @@ namespace Milestone1
 
         private void userIds_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string id = userIds.SelectedValue.ToString();
+            id = userIds.SelectedValue.ToString();
            
             getUserInformation(id);
 
@@ -402,7 +409,7 @@ namespace Milestone1
             DataGridTextColumn col4 = new DataGridTextColumn();
             col4.Header = "Text";
             col4.Binding = new Binding("text");
-            col4.Width = 270;
+            col4.Width = 380;
             userFriendTipsGrid.Columns.Add(col4);
 
         }
@@ -428,6 +435,8 @@ namespace Milestone1
                             funnyTextBox.Text = reader.GetDouble(5).ToString();
                             coolTextBox.Text = reader.GetDouble(6).ToString();
                             usefulTextBox.Text = reader.GetDouble(7).ToString();
+                            latitudeTextBox.Text = myLocation.location.Latitude.ToString();
+                            longitudeTextBox.Text = myLocation.location.Longitude.ToString();
 
                         }
                     }
@@ -688,7 +697,7 @@ namespace Milestone1
                                 var distance = (this.myLocation.location.GetDistanceTo(businessLocation)* 0.00062137119223733);
                                 //var distance = (this.myLocation.location.GetDistanceTo(businessLocation) / 1609.344);
                                 var distanceString = string.Format("{0:F2}", distance);
-                                BusinessGrid.Items.Add(new Business(reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), distanceString, reader.GetDouble(8).ToString(), reader.GetString(9), avgReviewString, reader.GetString(11)));
+                                BusinessGrid.Items.Add(new Business(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), distanceString, reader.GetDouble(8).ToString(), reader.GetString(9), avgReviewString, reader.GetString(11)));
 
                             }
                         }
@@ -909,17 +918,79 @@ namespace Milestone1
             }
         }
 
-        private void showCheckinsButton_Click(object sender, RoutedEventArgs e)
-        {
-            
-            
-        }
-
         private void showReviewsButton_Click(object sender, RoutedEventArgs e)
         {
             ReviewWindow window = new ReviewWindow(selectedBusiness.name, selectedBusiness.address);
             window.Show();
         }
+
+        private void numberOfBusinessesButton_Click(object sender, RoutedEventArgs e)
+        {
+            Window window = new BusinessPerZipWindow(StateList.SelectedValue.ToString(), CityList.SelectedValue.ToString());
+            window.Show();
+        }
+
+        private void showCheckinsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Window window = new CheckInWindow(selectedBusiness.business_id);
+            window.Show();
+        }
+
+        private void searchName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            userIds.SelectedValue = null;
+            userIds.Items.Clear();
+            userFriendsList.Items.Clear();
+            userFriendTipsGrid.Items.Clear();
+
+            userNameTextBox.Text = String.Empty;
+            userStarsTextBox.Text = String.Empty;
+            userFansTextBox.Text = String.Empty;
+            userYelpSinceTextBox.Text = String.Empty;
+            funnyTextBox.Text = String.Empty;
+            coolTextBox.Text = String.Empty;
+            usefulTextBox.Text = String.Empty;
+
+        }
+
+        private void removeFriendButton_Click(object sender, RoutedEventArgs e)
+        {
+            var row_item = (Friend)userFriendsList.SelectedItem;
+            string friendId = row_item.friend_id;
+
+            removeUserFriend(friendId);
+
+            userFriendsList.Items.Clear();
+            userFriendTipsGrid.Items.Clear();
+
+            getUserFriends(id);
+            getUserFriendsReviews(id);
+
+        }
+
+        public void removeUserFriend(string friendId)
+        {
+            using (var conn = new NpgsqlConnection(BuildConnString()))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "DELETE FROM friendsTable WHERE user_id = '" + id + "' AND friend_id = '" + friendId + "'; ";
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            
+                        }
+                    }
+                }
+
+                conn.Close();
+            }
+        }
+
     }
 
 

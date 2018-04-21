@@ -4,17 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Milestone1"
-        xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" x:Class="Milestone1.CheckInWindow"
+        xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" x:Class="Milestone1.BusinessPerZipWindow"
         mc:Ignorable="d"
-        Title="CheckInWindow" Height="450" Width="800">
+        Title="BusinessPerZipWindow" Height="450" Width="800">
     <Grid>
         <ScrollViewer HorizontalAlignment="Left" Height="420" Margin="0,0,-0.4,0" VerticalAlignment="Top" Width="794">
 
-            <chartingToolkit:Chart Title="Number of Check-ins per Day-of-Week" Name="checkInChart">
+            <chartingToolkit:Chart Title="Number of Business per Zipcode" Name="zipcodeChart">
                 <chartingToolkit:Chart.DataContext>
                     <PointCollection></PointCollection>
                 </chartingToolkit:Chart.DataContext>
-                <chartingToolkit:ColumnSeries DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" Title="Check-In Data"/>
+                <chartingToolkit:ColumnSeries DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" Title="Zipcode Data"/>
             </chartingToolkit:Chart>
 
         </ScrollViewer>

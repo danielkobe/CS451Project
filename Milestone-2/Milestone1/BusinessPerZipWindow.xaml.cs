@@ -16,35 +16,35 @@ using System.Windows.Shapes;
 namespace Milestone1
 {
     /// <summary>
-    /// Interaction logic for CheckInWindow.xaml
+    /// Interaction logic for BusinessPerZipWindow.xaml
     /// </summary>
-    public partial class CheckInWindow : Window
+    public partial class BusinessPerZipWindow : Window
     {
-        public CheckInWindow(string businessId)
+        public BusinessPerZipWindow(string state, string city)
         {
             InitializeComponent();
-            columnChart(businessId);
+            columnChart(state, city);
         }
 
-        private void columnChart(string businessId)
+        private void columnChart(string state, string city)
         {
 
-            List<KeyValuePair<string, int>> checkInChartData = new List<KeyValuePair<string, int>>();
+            List<KeyValuePair<string, int>> zipcodeData = new List<KeyValuePair<string, int>>();
             using (var conn = new NpgsqlConnection("Server=localhost; Database=yelpdb; Port=5432; Username=postgres; Password=Compaq27"))
             {
                 conn.Open();
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = "SELECT * FROM checkintable WHERE business_id = '" + businessId + "';";
+                    cmd.CommandText = "SELECT postal_code, COUNT(business_id) FROM businessTable WHERE state = '" + state + "' AND city = '" + city + "' GROUP BY postal_code ORDER BY postal_code;";
 
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            checkInChartData.Add(new KeyValuePair<string, int>(reader.GetString(1), reader.GetInt32(2) + reader.GetInt32(3) + reader.GetInt32(4) + reader.GetInt32(5)));
+                            zipcodeData.Add(new KeyValuePair<string, int>(reader.GetString(0), reader.GetInt32(1)));
                         }
-                        checkInChart.DataContext = checkInChartData;
+                        zipcodeChart.DataContext = zipcodeData;
                     }
                 }
 
