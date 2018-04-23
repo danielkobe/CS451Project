@@ -30,7 +30,7 @@ namespace Milestone1
         {
 
             List<KeyValuePair<string, int>> zipcodeData = new List<KeyValuePair<string, int>>();
-            using (var conn = new NpgsqlConnection("Server=localhost; Database=yelpdb; Port=5432; Username=postgres; Password=Compaq27"))
+            using (var conn = new NpgsqlConnection("Server=localhost; Database=yelpdb; Port=5433; Username=postgres; Password=Bix53z7h4m"))
             {
                 conn.Open();
                 using (var cmd = new NpgsqlCommand())

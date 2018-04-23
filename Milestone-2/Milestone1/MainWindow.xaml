@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Milestone1"
         mc:Ignorable="d"
-        Title="Milestone3" Height="822" Width="1170">
+        Title="Milestone3" Height="828" Width="1170">
     <Grid Margin="10,0,10,10">
         <TabControl Margin="0,0,1,0">
             <TabItem x:Name="userTab" Header="User Information" Grid.IsSharedSizeScope="True">
@@ -132,10 +132,10 @@
                     <TextBox x:Name="businessTextBox" IsReadOnly="True" Grid.ColumnSpan="2" Grid.Column="1" HorizontalAlignment="Right" Height="32" Margin="0,613,297,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="594" Text="Business Name" FontSize="18"/>
                     <Button x:Name="checkinButton" Content="Checkin" Grid.Column="2" HorizontalAlignment="Left" Margin="584,613,0,0" VerticalAlignment="Top" Width="97" Height="32" FontSize="18" Background="#FFB9BED1" Click="checkinButton_Click"/>
                     <TextBox x:Name="reviewTextBox" Grid.ColumnSpan="2" Grid.Column="1" HorizontalAlignment="Left" Height="90" Margin="147,653,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="594"/>
-                    <GroupBox x:Name="ratingGroupBox" Grid.Column="2" Header="Rating" HorizontalAlignment="Left" Height="101" Margin="584,645,0,-9" VerticalAlignment="Top" Width="104">
+                    <GroupBox x:Name="ratingGroupBox" Grid.Column="2" Header="Rating" HorizontalAlignment="Left" Height="104" Margin="584,645,0,0" VerticalAlignment="Top" Width="108">
                         <Grid Margin="-1,1,4,4">
                             <ComboBox x:Name="ratingComboBox" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="89" Margin="2,0,-2,0"/>
-                            <Button x:Name="addReviewButton" Content="Add Review" HorizontalAlignment="Left" Margin="2,34,-2,0" VerticalAlignment="Top" Width="89" Height="40" FontSize="15" Background="#FFB9BED1"/>
+                            <Button x:Name="addReviewButton" Content="Add Review" HorizontalAlignment="Left" Margin="2,34,0,3" Width="89" FontSize="15" Background="#FFB9BED1" Click="addReviewButton_Click"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="groupBox4" Header="" HorizontalAlignment="Left" Height="167" Margin="692,488,0,0" VerticalAlignment="Top" Width="173" Grid.Column="2">

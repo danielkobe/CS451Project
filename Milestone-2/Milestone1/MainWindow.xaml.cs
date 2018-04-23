@@ -127,7 +127,7 @@ namespace Milestone1
 
             public CLocation()
             {
-                 e = new EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>>(watcher_PositionChanged);
+                e = new EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>>(watcher_PositionChanged);
             }
 
             public void GetLocationEvent()
@@ -163,6 +163,7 @@ namespace Milestone1
             addDays();
             addTimes();
             addSorts();
+            addRatings();
             SearchButton.Background = Brushes.LightGray;
 
             myLocation = new CLocation();
@@ -170,12 +171,24 @@ namespace Milestone1
             Console.WriteLine("Enter any key to quit.");
             Console.ReadLine();
             checkinButton.IsEnabled = false;
+            showReviewsButton.IsEnabled = false;
+            numberOfBusinessesButton.IsEnabled = false;
+            showCheckinsButton.IsEnabled = false;
+            addReviewButton.IsEnabled = false;
 
         }
         private void addDays()
         {
             string[] days = new string[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
             dayOfWeekComboBox.ItemsSource = days;
+        }
+
+        private void addRatings()
+        {
+            string[] ratings = new string[] { "1", "2", "3", "4", "5" };
+            ratingComboBox.ItemsSource = ratings;
+            ratingComboBox.IsEnabled = false;
+            ratingComboBox.SelectedIndex = 0;
         }
 
         private void addSorts()
@@ -200,10 +213,10 @@ namespace Milestone1
             toComboBox.SelectedValuePath = "Value";
             float time;
             string timeString;
-            for(int i=0; i <= 48; i++)
+            for (int i = 0; i <= 48; i++)
             {
                 time = (float)i / 2;
-                timeString = (i/2).ToString() + ":";
+                timeString = (i / 2).ToString() + ":";
                 if (i % 2 == 0)
                 {
                     timeString += "00";
@@ -220,7 +233,7 @@ namespace Milestone1
         private string BuildConnString()
         {
             //return "Server=localhost; Database=yelpdb; Port=5433; Username=postgres; Password=Bix53z7h4m";
-            return "Server=localhost; Database=yelpdb; Port=5432; Username=postgres; Password=Compaq27";
+            return "Server=localhost; Database=yelpdb; Port=5433; Username=postgres; Password=Bix53z7h4m";
         }
 
         public void AddStates()
@@ -374,7 +387,7 @@ namespace Milestone1
         private void userIds_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             id = userIds.SelectedValue.ToString();
-           
+
             getUserInformation(id);
 
             userFriendsList.Items.Clear();
@@ -483,6 +496,7 @@ namespace Milestone1
             ZipList.Items.Clear();
             CategoryList.Items.Clear();
             SelectedCategoriesList.Items.Clear();
+            numberOfBusinessesButton.IsEnabled = false;
 
             using (var conn = new NpgsqlConnection(BuildConnString()))
             {
@@ -510,6 +524,7 @@ namespace Milestone1
             ZipList.Items.Clear();
             CategoryList.Items.Clear();
             SelectedCategoriesList.Items.Clear();
+            numberOfBusinessesButton.IsEnabled = true;
 
             if (CityList.SelectedItem != null)
             {
@@ -563,7 +578,7 @@ namespace Milestone1
                         }
                     }
 
-
+                    /*
                     BusinessGrid.Items.Clear();
                     using (var cmd = new NpgsqlCommand())
                     {
@@ -577,6 +592,7 @@ namespace Milestone1
                             }
                         }
                     }
+                    */
 
                     numberOfBusinessesLabel.Content = "# of Businesses: " + BusinessGrid.Items.Count.ToString();
                     conn.Close();
@@ -591,7 +607,7 @@ namespace Milestone1
             {
                 SelectedCategoriesList.Items.Add(CategoryList.SelectedItem.ToString());
             }
-            
+
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
@@ -605,6 +621,7 @@ namespace Milestone1
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             CheckAttributeCheckboxes();
+
             if (SelectedCategoriesList.Items.Count != 0)
             {
                 using (var conn = new NpgsqlConnection(BuildConnString()))
@@ -625,11 +642,11 @@ namespace Milestone1
                                           "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(0).ToString() + "'";
 
 
-                        if (SelectedCategoriesList.Items.Count>1)
+                        if (SelectedCategoriesList.Items.Count > 1)
                         {
                             for (int i = 1; i < SelectedCategoriesList.Items.Count; i++)
                             {
-                                cmd.CommandText += "AND b IN(" + 
+                                cmd.CommandText += "AND b IN(" +
                                                    "SELECT b " +
                                                    "FROM categoriesTable " +
                                                    "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(i).ToString() + "'";
@@ -647,7 +664,7 @@ namespace Milestone1
 
                         if (Attributes.Count > 0)
                         {
-                            for(int i=0; i < Attributes.Count; i++)
+                            for (int i = 0; i < Attributes.Count; i++)
                             {
                                 cmd.CommandText += "AND b IN ( " +
                                                   "SELECT b " +
@@ -667,7 +684,7 @@ namespace Milestone1
                             }
                         }
 
-                        for (int j = 0; j<(SelectedCategoriesList.Items.Count + Attributes.Count + Prices.Count); j++)
+                        for (int j = 0; j < (SelectedCategoriesList.Items.Count + Attributes.Count + Prices.Count); j++)
                         {
                             cmd.CommandText += ")";
                         }
@@ -680,11 +697,11 @@ namespace Milestone1
                         }
 
                         //descending order for all sorts besides name and distance
-                        if(sortBy!="name" && sortBy != "distance")
+                        if (sortBy != "name" && sortBy != "distance")
                         {
                             cmd.CommandText += " DESC";
                         }
-        
+
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -694,7 +711,7 @@ namespace Milestone1
                                 var avgReview = reader.GetDouble(12);
                                 string avgReviewString = string.Format("{0:F2}", avgReview);
                                 var businessLocation = new GeoCoordinate(latitude, longitude);
-                                var distance = (this.myLocation.location.GetDistanceTo(businessLocation)* 0.00062137119223733);
+                                var distance = (this.myLocation.location.GetDistanceTo(businessLocation) * 0.00062137119223733);
                                 //var distance = (this.myLocation.location.GetDistanceTo(businessLocation) / 1609.344);
                                 var distanceString = string.Format("{0:F2}", distance);
                                 BusinessGrid.Items.Add(new Business(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), distanceString, reader.GetDouble(8).ToString(), reader.GetString(9), avgReviewString, reader.GetString(11)));
@@ -732,7 +749,7 @@ namespace Milestone1
             }
 
             //meal types
-            if (breakfastCheckBox.IsChecked==true)
+            if (breakfastCheckBox.IsChecked == true)
             {
                 Attributes.Add("breakfast");
             }
@@ -799,7 +816,7 @@ namespace Milestone1
             {
                 Attributes.Add("BikeParking");
             }
-            
+
         }
 
         private void SearchButton_MouseEnter(object sender, MouseEventArgs e)
@@ -813,7 +830,7 @@ namespace Milestone1
 
         private void checkinButton_Click(object sender, RoutedEventArgs e)
         {
-            if(businessTextBox.Text!="Business Name")
+            if (businessTextBox.Text != "Business Name")
             {
 
                 var time = DateTime.Now.TimeOfDay;
@@ -827,30 +844,30 @@ namespace Milestone1
                 string business_id = "";
                 switch (dayOfWeek)
                 {
-                    case 1:
+                    case 0:
                         day = "Monday";
                         break;
-                    case 2:
+                    case 1:
                         day = "Tuesday";
                         break;
-                    case 3:
+                    case 2:
                         day = "Wednesday";
                         break;
-                    case 4:
+                    case 3:
                         day = "Thursday";
                         break;
-                    case 5:
+                    case 4:
                         day = "Friday";
                         break;
-                    case 6:
+                    case 5:
                         day = "Saturday";
                         break;
-                    case 7:
+                    case 6:
                         day = "Sunday";
                         break;
                 }
 
-                if(6 <= hour && hour < 12)
+                if (6 <= hour && hour < 12)
                 {
                     timeOfDay = "morning";
                 }
@@ -898,23 +915,37 @@ namespace Milestone1
                                           "WHERE business_id = '" + business_id + "' AND day = '" + day + "'";
                         using (var reader = cmd.ExecuteReader())
                         {
-                            
+
                         }
                     }
 
                     conn.Close();
                 }
-                
+
             }
         }
 
         private void BusinessGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
-            if (BusinessGrid.SelectedItems.Count>0)
+            if (BusinessGrid.SelectedItems.Count > 0)
             {
                 selectedBusiness = (Business)BusinessGrid.SelectedItems[0];
                 businessTextBox.Text = selectedBusiness.name;
                 checkinButton.IsEnabled = true;
+                showReviewsButton.IsEnabled = true;
+                showCheckinsButton.IsEnabled = true;
+                addReviewButton.IsEnabled = true;
+                ratingComboBox.IsEnabled = true;
+            }
+
+            else
+            {
+                showReviewsButton.IsEnabled = false;
+                checkinButton.IsEnabled = false;
+                showCheckinsButton.IsEnabled = false;
+                addReviewButton.IsEnabled = false;
+                ratingComboBox.IsEnabled = false;
+                businessTextBox.Text = "Business Name";
             }
         }
 
@@ -932,8 +963,12 @@ namespace Milestone1
 
         private void showCheckinsButton_Click(object sender, RoutedEventArgs e)
         {
-            Window window = new CheckInWindow(selectedBusiness.business_id);
-            window.Show();
+            if (selectedBusiness != null)
+            {
+                Window window = new CheckInWindow(selectedBusiness.business_id);
+                window.Show();
+            }
+
         }
 
         private void searchName_TextChanged(object sender, TextChangedEventArgs e)
@@ -982,7 +1017,7 @@ namespace Milestone1
                     {
                         while (reader.Read())
                         {
-                            
+
                         }
                     }
                 }
@@ -991,7 +1026,36 @@ namespace Milestone1
             }
         }
 
+        private void addReviewButton_Click(object sender, RoutedEventArgs e)
+        {
+            var guid = Guid.NewGuid().ToString();
+
+            if (userIds.SelectedItem != null)
+            {
+                using (var conn = new NpgsqlConnection(BuildConnString()))
+                {
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = conn;
+                        cmd.CommandText = "INSERT INTO reviewTable " +
+                                          "VALUES('" + guid + "', '" + userIds.SelectedItem.ToString() + "', '" + selectedBusiness.business_id + "', '" + reviewTextBox.Text + "', '" + ratingComboBox.SelectedItem.ToString() +   "', current_date, 0, 0, 0);";
+
+                        Console.Out.Write(cmd.CommandText);
+                        using (var reader = cmd.ExecuteReader())
+                        {
+
+                        }
+                    }
+
+                    conn.Close();
+                }
+            }
+
+            else
+            {
+                MessageBox.Show("Error: Must choose user prior to adding review", "Milestone 3");
+            }
+        }
     }
-
-
 }
