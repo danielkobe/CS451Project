@@ -175,6 +175,8 @@ namespace Milestone1
             numberOfBusinessesButton.IsEnabled = false;
             showCheckinsButton.IsEnabled = false;
             addReviewButton.IsEnabled = false;
+            SearchButton.IsEnabled = false;
+
 
         }
         private void addDays()
@@ -497,6 +499,8 @@ namespace Milestone1
             CategoryList.Items.Clear();
             SelectedCategoriesList.Items.Clear();
             numberOfBusinessesButton.IsEnabled = false;
+            SearchButton.IsEnabled = false;
+
 
             using (var conn = new NpgsqlConnection(BuildConnString()))
             {
@@ -525,6 +529,8 @@ namespace Milestone1
             CategoryList.Items.Clear();
             SelectedCategoriesList.Items.Clear();
             numberOfBusinessesButton.IsEnabled = true;
+            SearchButton.IsEnabled = false;
+
 
             if (CityList.SelectedItem != null)
             {
@@ -554,6 +560,7 @@ namespace Milestone1
         {
             CategoryList.Items.Clear();
             SelectedCategoriesList.Items.Clear();
+            SearchButton.IsEnabled = true;
 
             if (ZipList.SelectedItem != null)
             {
@@ -621,40 +628,64 @@ namespace Milestone1
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             CheckAttributeCheckboxes();
+            bool FilterApplied = false;
 
-            if (SelectedCategoriesList.Items.Count != 0)
+            //if (SelectedCategoriesList.Items.Count != 0)
+            //{
+            using (var conn = new NpgsqlConnection(BuildConnString()))
             {
-                using (var conn = new NpgsqlConnection(BuildConnString()))
+                conn.Open();
+                BusinessGrid.Items.Clear();
+                using (var cmd = new NpgsqlCommand())
                 {
-                    conn.Open();
-                    BusinessGrid.Items.Clear();
-                    using (var cmd = new NpgsqlCommand())
+                    double latitude, longitude;
+                    cmd.Connection = conn;
+
+                    /*
+                    cmd.CommandText = "SELECT * " +
+                                      "FROM " +
+                                      "(SELECT * FROM businessTable WHERE state = '" + StateList.SelectedItem.ToString() + "' AND city = '" + CityList.SelectedItem.ToString() + "' AND postal_code = " + ZipList.SelectedItem.ToString() + ") " +
+                                      "AS b " +
+                                      "WHERE b IN (" +
+                                      "SELECT b " +
+                                      "FROM categoriesTable " +
+                                      "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(0).ToString() + "'";
+*/
+
+
+                    cmd.CommandText = "SELECT * " +
+                                      "FROM " +
+                                      "(SELECT * FROM businessTable WHERE state = '" + StateList.SelectedItem.ToString() + "' AND city = '" + CityList.SelectedItem.ToString() + "' AND postal_code = " + ZipList.SelectedItem.ToString() + ") " +
+                                      "AS b ";
+                    /*
+                                      "WHERE b IN (" +
+                                      "SELECT b " +
+                                      "FROM categoriesTable " +
+                                      "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(0).ToString() + "'";
+                   */
+
+                    if (SelectedCategoriesList.Items.Count > 0)
                     {
-                        double latitude, longitude;
-                        cmd.Connection = conn;
-                        cmd.CommandText = "SELECT * " +
-                                          "FROM " +
-                                          "(SELECT * FROM businessTable WHERE state = '" + StateList.SelectedItem.ToString() + "' AND city = '" + CityList.SelectedItem.ToString() + "' AND postal_code = " + ZipList.SelectedItem.ToString() + ") " +
-                                          "AS b " +
-                                          "WHERE b IN (" +
-                                          "SELECT b " +
-                                          "FROM categoriesTable " +
-                                          "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(0).ToString() + "'";
+                        FilterApplied = true;
+                        cmd.CommandText += "WHERE b IN(" +
+                                              "SELECT b " +
+                                              "FROM categoriesTable " +
+                                              "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(0).ToString() + "'";
 
-
-                        if (SelectedCategoriesList.Items.Count > 1)
+                        for (int i = 1; i < SelectedCategoriesList.Items.Count; i++)
                         {
-                            for (int i = 1; i < SelectedCategoriesList.Items.Count; i++)
-                            {
-                                cmd.CommandText += "AND b IN(" +
-                                                   "SELECT b " +
-                                                   "FROM categoriesTable " +
-                                                   "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(i).ToString() + "'";
-                            }
+                            cmd.CommandText += "AND b IN(" +
+                                               "SELECT b " +
+                                               "FROM categoriesTable " +
+                                               "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(i).ToString() + "'";
                         }
+                    }
 
-                        if (dayOfWeekComboBox.SelectedItem != null && fromComboBox.SelectedItem != null && toComboBox.SelectedItem != null)
+                    if (dayOfWeekComboBox.SelectedItem != null && fromComboBox.SelectedItem != null && toComboBox.SelectedItem != null)
+                    {
+                        if (FilterApplied)
                         {
+
                             cmd.CommandText += "AND b IN (" +
                                                "SELECT b " +
                                                "FROM businessTimesTable " +
@@ -662,67 +693,111 @@ namespace Milestone1
                                                "AND(businessTimesTable.open <= " + ((KeyValuePair<string, float>)fromComboBox.SelectedItem).Value.ToString() + ") AND(businessTimesTable.close >= " + ((KeyValuePair<string, float>)toComboBox.SelectedItem).Value.ToString() + " OR businessTimesTable.close = 0))";
                         }
 
-                        if (Attributes.Count > 0)
+                        else
                         {
-                            for (int i = 0; i < Attributes.Count; i++)
-                            {
-                                cmd.CommandText += "AND b IN ( " +
-                                                  "SELECT b " +
-                                                  "FROM attributesTable AS a " +
-                                                  "WHERE a.business_id = b.business_id AND a.attribute_type = '" + Attributes[i] + "' AND a.attribute_value = 'True' ";
-                            }
-                        }
-
-                        if (Prices.Count > 0)
-                        {
-                            for (int i = 0; i < Prices.Count; i++)
-                            {
-                                cmd.CommandText += "AND b IN ( " +
-                                                  "SELECT b " +
-                                                  "FROM attributesTable AS a " +
-                                                  "WHERE a.business_id = b.business_id AND a.attribute_type = 'RestaurantsPriceRange2' AND a.attribute_value = '" + Prices[i] + "' ";
-                            }
-                        }
-
-                        for (int j = 0; j < (SelectedCategoriesList.Items.Count + Attributes.Count + Prices.Count); j++)
-                        {
-                            cmd.CommandText += ")";
-                        }
-
-                        string sortBy = ((KeyValuePair<string, string>)sortComboBox.SelectedItem).Value.ToString();
-
-                        if (sortComboBox.SelectedItem != null)
-                        {
-                            cmd.CommandText += " ORDER BY " + sortBy;
-                        }
-
-                        //descending order for all sorts besides name and distance
-                        if (sortBy != "name" && sortBy != "distance")
-                        {
-                            cmd.CommandText += " DESC";
-                        }
-
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                latitude = reader.GetDouble(6);
-                                longitude = reader.GetDouble(7);
-                                var avgReview = reader.GetDouble(12);
-                                string avgReviewString = string.Format("{0:F2}", avgReview);
-                                var businessLocation = new GeoCoordinate(latitude, longitude);
-                                var distance = (this.myLocation.location.GetDistanceTo(businessLocation) * 0.00062137119223733);
-                                //var distance = (this.myLocation.location.GetDistanceTo(businessLocation) / 1609.344);
-                                var distanceString = string.Format("{0:F2}", distance);
-                                BusinessGrid.Items.Add(new Business(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), distanceString, reader.GetDouble(8).ToString(), reader.GetString(9), avgReviewString, reader.GetString(11)));
-
-                            }
+                            FilterApplied = true;
+                            cmd.CommandText += "WHERE b IN (" +
+                                               "SELECT b " +
+                                               "FROM businessTimesTable " +
+                                               "WHERE b.business_id = businessTimesTable.business_id AND businessTimesTable.day = '" + dayOfWeekComboBox.SelectedItem.ToString() + "'" +
+                                               "AND(businessTimesTable.open <= " + ((KeyValuePair<string, float>)fromComboBox.SelectedItem).Value.ToString() + ") AND(businessTimesTable.close >= " + ((KeyValuePair<string, float>)toComboBox.SelectedItem).Value.ToString() + " OR businessTimesTable.close = 0))";
                         }
                     }
-                    numberOfBusinessesLabel.Content = "# of Businesses: " + BusinessGrid.Items.Count.ToString();
-                    conn.Close();
+
+                    if (Attributes.Count > 0)
+                    {
+                        if (!FilterApplied)
+                        {
+                            cmd.CommandText += "WHERE b IN ( " +
+                                               "SELECT b " +
+                                               "FROM attributesTable AS a " +
+                                               "WHERE a.business_id = b.business_id AND a.attribute_type = '" + Attributes[0] + "' AND a.attribute_value = 'True' ";
+                            FilterApplied = true;
+                        }
+                        else
+                        {
+                            cmd.CommandText += "AND b IN ( " +
+                                               "SELECT b " +
+                                               "FROM attributesTable AS a " +
+                                               "WHERE a.business_id = b.business_id AND a.attribute_type = '" + Attributes[0] + "' AND a.attribute_value = 'True' ";
+                        }
+
+                        for (int i = 1; i < Attributes.Count; i++)
+                        {
+                            cmd.CommandText += "AND b IN ( " +
+                                               "SELECT b " +
+                                               "FROM attributesTable AS a " +
+                                               "WHERE a.business_id = b.business_id AND a.attribute_type = '" + Attributes[i] + "' AND a.attribute_value = 'True' ";
+                        }
+                    }
+
+                    if (Prices.Count > 0)
+                    {
+                        if (!FilterApplied)
+                        {
+                            cmd.CommandText += "WHERE b IN ( " +
+                                               "SELECT b " +
+                                               "FROM attributesTable AS a " +
+                                               "WHERE a.business_id = b.business_id AND a.attribute_type = 'RestaurantsPriceRange2' AND a.attribute_value = '" + Prices[0] + "' ";
+                        }
+
+                        else
+                        {
+                            cmd.CommandText += "AND b IN ( " +
+                                               "SELECT b " +
+                                               "FROM attributesTable AS a " +
+                                               "WHERE a.business_id = b.business_id AND a.attribute_type = 'RestaurantsPriceRange2' AND a.attribute_value = '" + Prices[0] + "' ";
+                        }
+
+
+                        for (int i = 1; i < Prices.Count; i++)
+                        {
+                            cmd.CommandText += "AND b IN ( " +
+                                               "SELECT b " +
+                                               "FROM attributesTable AS a " +
+                                               "WHERE a.business_id = b.business_id AND a.attribute_type = 'RestaurantsPriceRange2' AND a.attribute_value = '" + Prices[i] + "' ";
+                        }
+                    }
+
+                    for (int j = 0; j < (SelectedCategoriesList.Items.Count + Attributes.Count + Prices.Count); j++)
+                    {
+                        cmd.CommandText += ")";
+                    }
+
+                    string sortBy = ((KeyValuePair<string, string>)sortComboBox.SelectedItem).Value.ToString();
+
+                    if (sortComboBox.SelectedItem != null)
+                    {
+                        cmd.CommandText += " ORDER BY " + sortBy;
+                    }
+
+                    //descending order for all sorts besides name and distance
+                    if (sortBy != "name" && sortBy != "distance")
+                    {
+                        cmd.CommandText += " DESC";
+                    }
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            latitude = reader.GetDouble(6);
+                            longitude = reader.GetDouble(7);
+                            var avgReview = reader.GetDouble(12);
+                            string avgReviewString = string.Format("{0:F2}", avgReview);
+                            var businessLocation = new GeoCoordinate(latitude, longitude);
+                            var distance = (this.myLocation.location.GetDistanceTo(businessLocation) * 0.00062137119223733);
+                            //var distance = (this.myLocation.location.GetDistanceTo(businessLocation) / 1609.344);
+                            var distanceString = string.Format("{0:F2}", distance);
+                            BusinessGrid.Items.Add(new Business(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), distanceString, reader.GetDouble(8).ToString(), reader.GetString(9), avgReviewString, reader.GetString(11)));
+
+                        }
+                    }
                 }
+                numberOfBusinessesLabel.Content = "# of Businesses: " + BusinessGrid.Items.Count.ToString();
+                conn.Close();
             }
+            //}
         }
 
         private void CheckAttributeCheckboxes()
@@ -1039,7 +1114,7 @@ namespace Milestone1
                     {
                         cmd.Connection = conn;
                         cmd.CommandText = "INSERT INTO reviewTable " +
-                                          "VALUES('" + guid + "', '" + userIds.SelectedItem.ToString() + "', '" + selectedBusiness.business_id + "', '" + reviewTextBox.Text + "', '" + ratingComboBox.SelectedItem.ToString() +   "', current_date, 0, 0, 0);";
+                                          "VALUES('" + guid + "', '" + userIds.SelectedItem.ToString() + "', '" + selectedBusiness.business_id + "', '" + reviewTextBox.Text + "', '" + ratingComboBox.SelectedItem.ToString() + "', current_date, 0, 0, 0);";
 
                         Console.Out.Write(cmd.CommandText);
                         using (var reader = cmd.ExecuteReader())
