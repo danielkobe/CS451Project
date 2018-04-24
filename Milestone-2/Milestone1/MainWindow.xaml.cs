@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Npgsql;
 using System.Device.Location; // Add a reference to System.Device.dll
 using System.Data;
+using System.ComponentModel;
 
 namespace Milestone1
 {
@@ -630,8 +631,7 @@ namespace Milestone1
             CheckAttributeCheckboxes();
             bool FilterApplied = false;
 
-            //if (SelectedCategoriesList.Items.Count != 0)
-            //{
+            
             using (var conn = new NpgsqlConnection(BuildConnString()))
             {
                 conn.Open();
@@ -641,28 +641,12 @@ namespace Milestone1
                     double latitude, longitude;
                     cmd.Connection = conn;
 
-                    /*
-                    cmd.CommandText = "SELECT * " +
-                                      "FROM " +
-                                      "(SELECT * FROM businessTable WHERE state = '" + StateList.SelectedItem.ToString() + "' AND city = '" + CityList.SelectedItem.ToString() + "' AND postal_code = " + ZipList.SelectedItem.ToString() + ") " +
-                                      "AS b " +
-                                      "WHERE b IN (" +
-                                      "SELECT b " +
-                                      "FROM categoriesTable " +
-                                      "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(0).ToString() + "'";
-*/
-
 
                     cmd.CommandText = "SELECT * " +
                                       "FROM " +
                                       "(SELECT * FROM businessTable WHERE state = '" + StateList.SelectedItem.ToString() + "' AND city = '" + CityList.SelectedItem.ToString() + "' AND postal_code = " + ZipList.SelectedItem.ToString() + ") " +
                                       "AS b ";
-                    /*
-                                      "WHERE b IN (" +
-                                      "SELECT b " +
-                                      "FROM categoriesTable " +
-                                      "WHERE b.business_id = categoriesTable.business_id AND categoriesTable.category_type = '" + SelectedCategoriesList.Items.GetItemAt(0).ToString() + "'";
-                   */
+                    
 
                     if (SelectedCategoriesList.Items.Count > 0)
                     {
@@ -766,7 +750,7 @@ namespace Milestone1
 
                     string sortBy = ((KeyValuePair<string, string>)sortComboBox.SelectedItem).Value.ToString();
 
-                    if (sortComboBox.SelectedItem != null)
+                    if (sortComboBox.SelectedItem != null && sortBy!="distance")
                     {
                         cmd.CommandText += " ORDER BY " + sortBy;
                     }
@@ -787,17 +771,22 @@ namespace Milestone1
                             string avgReviewString = string.Format("{0:F2}", avgReview);
                             var businessLocation = new GeoCoordinate(latitude, longitude);
                             var distance = (this.myLocation.location.GetDistanceTo(businessLocation) * 0.00062137119223733);
-                            //var distance = (this.myLocation.location.GetDistanceTo(businessLocation) / 1609.344);
                             var distanceString = string.Format("{0:F2}", distance);
                             BusinessGrid.Items.Add(new Business(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), distanceString, reader.GetDouble(8).ToString(), reader.GetString(9), avgReviewString, reader.GetString(11)));
 
                         }
                     }
+
+                    //have to sort by distance programatically because distance is a calculated value based on coordinates from the query (can't query the sort)
+                    if (sortBy == "distance")
+                    {
+                        BusinessGrid.Items.SortDescriptions.Add(new SortDescription("distance", ListSortDirection.Ascending));
+                    }
+
                 }
                 numberOfBusinessesLabel.Content = "# of Businesses: " + BusinessGrid.Items.Count.ToString();
                 conn.Close();
             }
-            //}
         }
 
         private void CheckAttributeCheckboxes()
@@ -1130,6 +1119,20 @@ namespace Milestone1
             else
             {
                 MessageBox.Show("Error: Must choose user prior to adding review", "Milestone 3");
+            }
+        }
+
+        private void setLocationButton_Click(object sender, RoutedEventArgs e)
+        {
+            double latitude, longitude;
+            if(double.TryParse(latitudeTextBox.Text, out latitude) && double.TryParse(longitudeTextBox.Text, out longitude))
+            {
+                myLocation.location.Latitude = latitude;
+                myLocation.location.Longitude = longitude;
+            }
+            else
+            {
+                MessageBox.Show("Error: Must enter valid coordinates", "Milestone 3");
             }
         }
     }

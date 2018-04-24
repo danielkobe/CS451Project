@@ -17,6 +17,10 @@
 
 
 
+                    <GroupBox x:Name="locationBox" Grid.Column="1" Header="Set User Location" HorizontalAlignment="Left" Height="172" Margin="743.6,7,0,0" VerticalAlignment="Top" Width="215"/>
+
+
+
                     <TextBox x:Name="searchName" HorizontalAlignment="Left" Height="23" Margin="10,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="165" Grid.ColumnSpan="2" TextChanged="searchName_TextChanged"/>
                     <ListBox x:Name="userIds" HorizontalAlignment="Left" Height="105" Margin="10,69,0,0" VerticalAlignment="Top" Width="416" Grid.ColumnSpan="2" SelectionChanged="userIds_SelectionChanged"/>
                     <Button x:Name="searchUserIdButton" Content="Search" Grid.Column="1" HorizontalAlignment="Left" Margin="30.6,36,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="searchUserIdButton_Click"/>
@@ -45,11 +49,10 @@
                     <Label x:Name="longitudeLabel" Content="Longitude:" Grid.Column="1" HorizontalAlignment="Left" Margin="750.6,81,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="latitudeTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="821.6,46,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="longitudeTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="821.6,81,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                    <Button x:Name="setLocationButton" Content="Set Location" Grid.Column="1" HorizontalAlignment="Left" Margin="866.6,124,0,0" VerticalAlignment="Top" Width="75" Height="29"/>
+                    <Button x:Name="setLocationButton" Content="Set Location" Grid.Column="1" HorizontalAlignment="Left" Margin="866.6,124,0,0" VerticalAlignment="Top" Width="75" Height="29" Click="setLocationButton_Click"/>
 
                     <GroupBox x:Name= "friendBox" Header ="Friends" HorizontalAlignment="Left" Height="565" Margin="5,184,0,0" VerticalAlignment="Top" Width="387" Grid.ColumnSpan="2"/>
                     <GroupBox x:Name="reviewBox" Header ="Reviews By Friends" Grid.Column="1" HorizontalAlignment="Left" Height="565" Margin="243.6,184,0,0" VerticalAlignment="Top" Width="721"/>
-                    <GroupBox x:Name="locationBox" Grid.Column="1" Header="Set User Location" HorizontalAlignment="Left" Height="172" Margin="743.6,7,0,0" VerticalAlignment="Top" Width="215"/>
                     <GroupBox x:Name="infoBox"  Grid.Column="1" Header="User Information" HorizontalAlignment="Left" Height="172" Margin="284.6,7,0,0" VerticalAlignment="Top" Width="444"/>
                     <GroupBox x:Name="setUserBox" Header="Set Current User" HorizontalAlignment="Left" Height="169" Margin="5,10,0,0" VerticalAlignment="Top" Width="432" Grid.ColumnSpan="2"/>
                     <Label Content="Latest reviews posted by the user's friends:" Grid.Column="1" HorizontalAlignment="Left" Margin="253.6,200,0,0" VerticalAlignment="Top" Width="237"/>
@@ -147,7 +150,7 @@
                     <GroupBox x:Name="ratingGroupBox" Grid.Column="2" Header="Rating" HorizontalAlignment="Left" Height="98" Margin="584,645,0,0" VerticalAlignment="Top" Width="104">
                         <Grid Margin="-1,1,4,4">
                             <ComboBox x:Name="ratingComboBox" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="89" Margin="2,0,-2,0"/>
-                            <Button x:Name="addReviewButton" Content="Add Review" HorizontalAlignment="Left" Margin="2,34,-2,-2" VerticalAlignment="Top" Width="89" Height="37" FontSize="15" Background="#FFB9BED1"/>
+                            <Button x:Name="addReviewButton" Content="Add Review" HorizontalAlignment="Left" Margin="2,34,-2,-2" VerticalAlignment="Top" Width="89" Height="37" FontSize="15" Background="#FFB9BED1" Click="addReviewButton_Click"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="groupBox4" Header="" HorizontalAlignment="Left" Height="167" Margin="692,488,0,0" VerticalAlignment="Top" Width="173" Grid.Column="2">
