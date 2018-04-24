@@ -364,7 +364,7 @@ def insert2CheckinTable():
         #connect to yelpdb database on postgres server using psycopg2
         #TODO: update the database name, username, and password
         try:
-            conn = psycopg2.connect("dbname='yelpdb' user='postgres' host='localhost' password='Bix53z7h4m'")
+            conn = psycopg2.connect("dbname='yelpdb' port=5433 user='postgres' host='localhost' password='Bix53z7h4m'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -376,6 +376,7 @@ def insert2CheckinTable():
             # include values for all businessTable attributes
             time = data['time']
             for days, entries in time.items():
+                morning=afternoon=evening=night=0
                 for entry, val in entries.items():
                     split_entry = entry.split(':')
                     if (6 <= int(split_entry[0]) < 12):#6-12
@@ -387,12 +388,11 @@ def insert2CheckinTable():
                     if(6 > int(split_entry[0]) or int(split_entry[0]) >= 23): #11-6
                         night += int(val)
 
-                sql_str = "INSERT INTO checkintable (business_id,dayofweek,morning,afternoon,evening,night) " \
+                sql_str = "INSERT INTO checkintable (business_id,day,morning,afternoon,evening,night) " \
                       "VALUES ('" + cleanStr4SQL(data['business_id']) + "','" + cleanStr4SQL(days) + "', " + str(morning) + ', ' + str(afternoon) + ', ' + str(evening) + ', ' + str(night) + ");"
 
                 try:
                     cur.execute(sql_str)
-                    print(sql_str)
                 except:
                     print("Insert to checkinTable failed!")
                 conn.commit()
@@ -419,5 +419,5 @@ def insert2CheckinTable():
 #insert2UserTable()
 #insert2FriendsTable()
 #insert2ReviewTable()
-#insert2CheckinTable()
+insert2CheckinTable()
 
